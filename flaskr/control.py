@@ -51,15 +51,15 @@ def settings():
     return render_template('control/settings.html')
 
 def genFrames():
-    frame = StreamingOutput()
+    buffer = StreamingOutput()
     while True:
         with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
             #Uncomment the next line to change your Pi's Camera rotation (in degrees)
             #camera.rotation = 90
             
-            camera.capture(frame, format='jpeg')
+            camera.capture(buffer, format='jpeg')
         yield (b'--frame\r\n'
-            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            b'Content-Type: image/jpeg\r\n\r\n' + buffer.frame + b'\r\n')
 
 @bp.route('/video_feed')
 def video_feed():
