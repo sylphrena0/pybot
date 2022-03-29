@@ -29,7 +29,12 @@ bp = Blueprint('control', __name__)
 
 @bp.route('/forward')
 def forward():
-    print ("Hello")
+    print ("Forward Pressed")
+    return ("nothing")
+
+@bp.route('/back')
+def forward():
+    print ("Back Pressed")
     return ("nothing")
 
 @bp.route('/', methods=['GET','POST'])
