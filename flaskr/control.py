@@ -33,7 +33,7 @@ def forward():
     return ("nothing")
 
 @bp.route('/back')
-def forward():
+def back():
     print ("Back Pressed")
     return ("nothing")
 
