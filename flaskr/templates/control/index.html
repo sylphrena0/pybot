@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Control{% endblock %}</h1>
+  {% if g.user %}
+  <a class="action" href="{{ url_for('control.settings') }}">Settings</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<img src="{{ url_for('video_feed') }}">
+{% endblock %}
