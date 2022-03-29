@@ -12,25 +12,24 @@
 <img src="{{ url_for('control.video_feed') }}" class="center">
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type=text/javascript>
-document.getElementById("forward").onmousedown = function() {mouseDown()};
-document.getElementById("forward").onmouseup = function() {mouseUp()};
 
-function mouseDown() {
-  $.getJSON('/forward', function(data) {});
-};
-
-function mouseUp() {
-  $.getJSON('/forward', function(data) {});
-};
-
-</script>
 
 <div class = centerdiv>
-<input type="submit" value="VALUE2" id="forward" class="button" onmouseup="playIt();" onclick="stopIt();"/><br>
+<input type="submit" value="VALUE2" id="forward" class="button" onmouseup="mouseDown();" onclick="MouseUp();"/><br>
 <input type="submit" value="VALUE1" id="left" class="button"/>
 <input type="submit" value="VALUE2" id="right" class="button"/><br> 
 <input type="submit" value="VALUE2" id="back" class="button"/>
+
+<script type=text/javascript>
+  function mouseDown() {
+    $.getJSON('/forward', function(data) {});
+  };
+  
+  function mouseUp() {
+    $.getJSON('/forward', function(data) {});
+  };
+
+  </script>
 
 </div>
 {% endblock %}
