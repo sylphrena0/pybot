@@ -30,9 +30,9 @@ bp = Blueprint('control', __name__)
 @bp.route('/', methods=['GET','POST'])
 def index():
     if request.method == 'POST':
-        if request.form.get('action1') == 'VALUE1':
+        if request.form.get('forward') == 'VALUE1':
             print("worked1")
-        elif  request.form.get('action2') == 'VALUE2':
+        elif  request.form.get('back') == 'VALUE2':
             print("worked2")
         else:
             pass # unknown
