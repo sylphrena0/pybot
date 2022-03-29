@@ -40,6 +40,5 @@ def create_app(test_config=None):
     app.add_url_rule('/', endpoint='index')
 
     from .templates.control import stream
-    app.register_blueprint(control.bp)
 
     return app
