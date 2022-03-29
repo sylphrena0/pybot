@@ -27,6 +27,11 @@ class StreamingOutput(object):
 
 bp = Blueprint('control', __name__)
 
+@app.route('/forward')
+def forward():
+    print ("Hello")
+    return ("nothing")
+
 @bp.route('/', methods=['GET','POST'])
 def index():
     if request.method == 'POST':
