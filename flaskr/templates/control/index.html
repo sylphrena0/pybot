@@ -9,4 +9,10 @@
 
 {% block content %}
 <img src="{{ url_for('control.video_feed') }}" class="center">
+
+<h3>Testing Buttons<h3/>
+  <form method="post" action="/">
+      <input type="submit" value="VALUE1" name="action1"/>
+      <input type="submit" value="VALUE2" name="action2" />
+  </form>
 {% endblock %}
