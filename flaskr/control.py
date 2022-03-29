@@ -27,7 +27,7 @@ class StreamingOutput(object):
 
 bp = Blueprint('control', __name__)
 
-@bp.route('/', methods=['POST'])
+@bp.route('/', methods=['GET','POST'])
 def index():
     if request.method == 'POST':
         if request.form.get('action1') == 'VALUE1':
