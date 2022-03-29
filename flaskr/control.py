@@ -37,7 +37,7 @@ def index():
         else:
             pass # unknown
     elif request.method == 'GET':
-        return render_template('index.html', form=form)
+        return render_template('index.html', form=request.form)
     return render_template('control/index.html')
 
 @bp.route('/settings', methods=('GET', 'POST'))
