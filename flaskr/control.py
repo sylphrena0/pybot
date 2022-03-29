@@ -39,7 +39,7 @@ def genFrames():
             #Uncomment the next line to change your Pi's Camera rotation (in degrees)
             #camera.rotation = 90
 
-            frame = None
+            frame = io.BytesIO()
             camera.capture(frame, format='jpeg')
         yield (b'--frame\r\n'
             b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
