@@ -12,24 +12,6 @@ import logging
 import socketserver
 import os 
 from threading import Condition
-from http import server
-
-os.system("/home/pi/.pyenv/versions/3.8.12/bin/python  /home/pi/server/webcontrols.pyw &") #this sends a bash command to run other python script
-
-PAGE="""\
-<html>
-<head>
-<title>RaspberryPi Car</title>
-<style>
-body {background-color: #252525;}
-</style>
-</head>
-<body>
-<center><h1>RaspberryPi Car</h1></center>
-<center><img src="stream.mjpg" width="640" height="480"></center>
-</body>
-</html>
-"""
 
 class StreamingOutput(object):
     def __init__(self):
@@ -97,8 +79,7 @@ with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
     #camera.rotation = 90
     camera.start_recording(output, format='mjpeg')
     try:
-        address = ('', 8000)
-        server = StreamingServer(address, StreamingHandler)
-        server.serve_forever()
+        while True:
+            pass
     finally:
         camera.stop_recording()
