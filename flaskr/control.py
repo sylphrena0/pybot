@@ -95,6 +95,7 @@ def right():
         return ("nothing")
 
 @bp.route('/', methods=['GET','POST'])
+@login_required
 def index():
     if request.method == 'POST':
         if request.form.get('forward') == 'VALUE1':
