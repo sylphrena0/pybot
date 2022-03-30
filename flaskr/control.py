@@ -37,62 +37,47 @@ bp = Blueprint('control', __name__)
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
 def move():
-    direction = request.args.get('direction')
-    if direction == 'forward':
-        throttle = 0.4
-    if direction == 'backward':
-        throttle = -0.4
-    kit.motor1.throttle = throttle
-    kit.motor2.throttle = throttle
-    kit.motor3.throttle = throttle
-    kit.motor4.throttle = throttle
-    return ("nothing")
+    speed = 0.4
+    command = request.args.get('command')
 
-@bp.route('/stop')
-def stop():
-    kit.motor1.throttle = 0
-    kit.motor2.throttle = 0
-    kit.motor3.throttle = 0
-    kit.motor4.throttle = 0
-    return ("nothing")
-
-@bp.route('/left')
-def left():
-    try:
+    #parse commands from request and set speed
+    if command == 'forward':
+        throttleL, throttleR = speed, speed
+    elif command == 'backward':
+        throttleL, throttleR = -speed, -speed
+    elif command == 'stop':
+        throttleL, throttleR = 0, 0
+    elif command == 'rightTurn':
+        direction = request.args.get('direction')
         if throttle >= 0.6:
-            leftThrottle = throttle
-            rightThrottle = throttle - 0.2
+            throttleL = speed
+            throttleR = speed - 0.2
         elif throttle < 0.6:
-            leftThrottle = throttle + 0.2
-            rightThrottle = throttle
-        print("Moving at throttle",throttle)
-        kit.motor1.throttle = leftThrottle
-        kit.motor2.throttle = leftThrottle
-        kit.motor3.throttle = rightThrottle
-        kit.motor4.throttle = rightThrottle
-        return ("nothing")
-    except:
-        print("Undefined Throttle")
-        return ("nothing")
+            throttleL = speed + 0.2
+            throttleR = speed
 
-@bp.route('/right')
-def right():
-    try:
+        if direction == 'backward': #checks if going backward or forward and changes direction 
+            throttleL *= -1
+            throttleR *= -1
+
+    elif command == 'leftTurn':
+        direction = request.args.get('direction')
         if throttle >= 0.6:
-            leftThrottle = throttle - 0.2
-            rightThrottle = throttle
+            throttleL = speed - 0.2
+            throttleR = speed
         elif throttle < 0.6:
-            leftThrottle = throttle
-            rightThrottle = throttle + 0.2
-        print("Moving at throttle",throttle)
-        kit.motor1.throttle = leftThrottle
-        kit.motor2.throttle = leftThrottle
-        kit.motor3.throttle = rightThrottle
-        kit.motor4.throttle = rightThrottle
-        return ("nothing")
-    except:
-        print("Undefined Throttle")
-        return ("nothing")
+            throttleL = speed
+            throttleR = speed + 0.2
+
+        if direction == 'backward': #checks if going backward or forward and changes direction
+            throttleL *= -1
+            throttleR *= -1
+
+    kit.motor1.throttle = throttleL
+    kit.motor2.throttle = throttleL
+    kit.motor3.throttle = throttleR
+    kit.motor4.throttle = throttleR
+    return ("nothing")
 
 #defines the index page and controls buttons. control buttons should be removed!
 @bp.route('/', methods=['GET','POST'])
