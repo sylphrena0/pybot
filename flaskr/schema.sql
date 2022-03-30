@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS throttle;
+DROP TABLE IF EXISTS settings;
 
 CREATE TABLE user ( --create user table
   id INTEGER PRIMARY KEY AUTOINCREMENT,
