@@ -49,11 +49,11 @@ def move():
         throttleL, throttleR = 0, 0
     elif command == 'rightTurn':
         direction = request.args.get('direction')
-        if throttle >= 0.6:
+        if throttle >= 0.7:
             throttleL = speed
-            throttleR = speed - 0.2
-        elif throttle < 0.6:
-            throttleL = speed + 0.2
+            throttleR = speed - 0.3
+        elif throttle < 0.7:
+            throttleL = speed + 0.3
             throttleR = speed
 
         if direction == 'backward': #checks if going backward or forward and changes direction 
@@ -62,12 +62,12 @@ def move():
 
     elif command == 'leftTurn':
         direction = request.args.get('direction')
-        if throttle >= 0.6:
-            throttleL = speed - 0.2
+        if throttle >= 0.7:
+            throttleL = speed - 0.3
             throttleR = speed
-        elif throttle < 0.6:
+        elif throttle < 0.7:
             throttleL = speed
-            throttleR = speed + 0.2
+            throttleR = speed + 0.3
 
         if direction == 'backward': #checks if going backward or forward and changes direction
             throttleL *= -1
