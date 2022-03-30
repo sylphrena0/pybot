@@ -58,28 +58,41 @@ def stop():
 
 @bp.route('/left')
 def left():
-    throttle = 0.4
-    leftThrottle = throttle
-    rightThrottle = -throttle
-    print("Moving at throttle",throttle)
-    kit.motor1.throttle = leftThrottle
-    kit.motor2.throttle = leftThrottle
-    kit.motor3.throttle = rightThrottle
-    kit.motor4.throttle = rightThrottle
-    return ("nothing")
+    try:
+        if throttle >= 0.6:
+            leftThrottle = throttle
+            rightThrottle = throttle - 0.2
+        elif throttle < 0.6:
+            leftThrottle = throttle + 0.2
+            rightThrottle = throttle
+        print("Moving at throttle",throttle)
+        kit.motor1.throttle = leftThrottle
+        kit.motor2.throttle = leftThrottle
+        kit.motor3.throttle = rightThrottle
+        kit.motor4.throttle = rightThrottle
+        return ("nothing")
+    except:
+        print("Undefined Throttle")
+        return ("nothing")
 
 @bp.route('/right')
 def right():
-    throttle = 0.4
-    leftThrottle = -throttle
-    rightThrottle = throttle
-    print("Moving at throttle",throttle)
-    kit.motor1.throttle = leftThrottle
-    kit.motor2.throttle = leftThrottle
-    kit.motor3.throttle = rightThrottle
-    kit.motor4.throttle = rightThrottle
-    return ("nothing")
-
+    try:
+        if throttle >= 0.6:
+            leftThrottle = throttle - 0.2
+            rightThrottle = throttle
+        elif throttle < 0.6:
+            leftThrottle = throttle
+            rightThrottle = throttle + 0.2
+        print("Moving at throttle",throttle)
+        kit.motor1.throttle = leftThrottle
+        kit.motor2.throttle = leftThrottle
+        kit.motor3.throttle = rightThrottle
+        kit.motor4.throttle = rightThrottle
+        return ("nothing")
+    except:
+        print("Undefined Throttle")
+        return ("nothing")
 
 @bp.route('/', methods=['GET','POST'])
 def index():
