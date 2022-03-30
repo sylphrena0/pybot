@@ -35,8 +35,9 @@ if (e.keyCode==38) {
 });
 
 $(document).keyup(function(e){
-if (e.keyCode==38)
-    stop();
+if (e.keyCode==38 || e.keyCode==40){
+    stop()
+  };
 });
 
   function forward(){$.getJSON('/forward', function(data) {});}  
