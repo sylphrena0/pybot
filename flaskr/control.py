@@ -2,16 +2,23 @@ import io #used to store frames
 import picamera #camera module for RPi camera
 import logging #self-explainatory
 import socketserver #may be unused?
-import sqlite3 #access to database
 from threading import Condition #used for frame storage setup
 from adafruit_motorkit import MotorKit #motor control lib
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response #web framework imports
 from werkzeug.exceptions import abort
 from flaskr.auth import login_required
-from flaskr.db import get_db
+from flaskr.db import get_db #access to database
 
-#define the motorkit controls
+#define the motorkit controls on init
 kit = MotorKit()
+
+#set default motor speed on init
+db = get_db()
+
+
+
+
+
 
 #this class is to enable streaming - it essentially makes an object where we can store frames without saving them to a file - modified from a template
 class StreamingOutput(object):
