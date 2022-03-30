@@ -8,7 +8,12 @@ CREATE TABLE user (
   password TEXT NOT NULL
 );
 
-CREATE TABLE throttle (
+CREATE TABLE settings (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  throttle FLOAT NOT NULL
+  throttle FLOAT NOT NULL,
+  nightvision BOOLEAN NOT NULL,
+  buttoncontrol BOOLEAN NOT NULL,
+  keycontrol BOOLEAN NOT NULL,
+  vresolution INT NOT NULL,
+  hresolution INT NOT NULL
 );
