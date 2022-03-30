@@ -3,10 +3,13 @@ import picamera
 import logging
 import socketserver 
 from threading import Condition
+from adafruit_motorkit import MotorKit
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response
 from werkzeug.exceptions import abort
 from flaskr.auth import login_required
 from flaskr.db import get_db
+
+kit = MotorKit()
 
 class StreamingOutput(object):
     def __init__(self):
@@ -29,12 +32,21 @@ bp = Blueprint('control', __name__)
 
 @bp.route('/forward')
 def forward():
-    print ("Forward Pressed")
+    throttle = 0.4
+    print("Moving at throttle",throttle)
+    kit.motor1.throttle = throttle
+    kit.motor2.throttle = throttle
+    kit.motor3.throttle = throttle
+    kit.motor4.throttle = throttle
     return ("nothing")
 
-@bp.route('/back')
-def back():
-    print ("Back Pressed")
+@bp.route('/stop')
+def stop():
+    kit.motor1.throttle = 0
+    kit.motor2.throttle = 0
+    kit.motor3.throttle = 0
+    kit.motor4.throttle = 0
+    print ("Stop")
     return ("nothing")
 
 @bp.route('/', methods=['GET','POST'])
