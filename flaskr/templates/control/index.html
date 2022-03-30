@@ -16,17 +16,21 @@
 
 <div class = centerdiv>
 
-<input type="submit" class="button" value="Forward" id="forward" onmousedown="mouseDown()" onmouseup="mouseUp()"/><br>
+<input type="submit" class="button" value="Forward" id="forward" onmousedown="forward()" onmouseup="stop()"/><br>
 <input type="submit" value="Left" id="left" class="button"/>
 <input type="submit" value="Right" id="right" class="button"/><br> 
-<input type="submit" value="Back" id="back" class="button"/>
+<input type="submit" class="button" value="Back" id="back" onmousedown="back()" onmouseup="stop()"/>
 
 <script type=text/javascript>
-  function mouseDown() {
+  function forward() {
     $.getJSON('/forward', function(data) {});
   }
   
-  function mouseUp() {
+  function forward() {
+    $.getJSON('/back', function(data) {});
+  }
+
+  function stop() {
     $.getJSON('/stop', function(data) {});
   }
 

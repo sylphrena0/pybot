@@ -40,6 +40,16 @@ def forward():
     kit.motor4.throttle = throttle
     return ("nothing")
 
+@bp.route('/back')
+def forward():
+    throttle = -0.4
+    print("Moving at throttle",throttle)
+    kit.motor1.throttle = throttle
+    kit.motor2.throttle = throttle
+    kit.motor3.throttle = throttle
+    kit.motor4.throttle = throttle
+    return ("nothing")
+
 @bp.route('/stop')
 def stop():
     kit.motor1.throttle = 0
