@@ -33,7 +33,6 @@ bp = Blueprint('control', __name__)
 @bp.route('/forward')
 def forward():
     throttle = 0.4
-    print("Moving at throttle",throttle)
     kit.motor1.throttle = throttle
     kit.motor2.throttle = throttle
     kit.motor3.throttle = throttle
@@ -43,7 +42,6 @@ def forward():
 @bp.route('/back')
 def back():
     throttle = -0.4
-    print("Moving at throttle",throttle)
     kit.motor1.throttle = throttle
     kit.motor2.throttle = throttle
     kit.motor3.throttle = throttle
@@ -56,8 +54,32 @@ def stop():
     kit.motor2.throttle = 0
     kit.motor3.throttle = 0
     kit.motor4.throttle = 0
-    print ("Stop")
     return ("nothing")
+
+@bp.route('/left')
+def left():
+    throttle = 0.4
+    leftThrottle = throttle
+    rightThrottle = -throttle
+    print("Moving at throttle",throttle)
+    kit.motor1.throttle = leftThrottle
+    kit.motor2.throttle = leftThrottle
+    kit.motor3.throttle = rightThrottle
+    kit.motor4.throttle = rightThrottle
+    return ("nothing")
+
+@bp.route('/right')
+def right():
+    throttle = 0.4
+    leftThrottle = -throttle
+    rightThrottle = throttle
+    print("Moving at throttle",throttle)
+    kit.motor1.throttle = leftThrottle
+    kit.motor2.throttle = leftThrottle
+    kit.motor3.throttle = rightThrottle
+    kit.motor4.throttle = rightThrottle
+    return ("nothing")
+
 
 @bp.route('/', methods=['GET','POST'])
 def index():

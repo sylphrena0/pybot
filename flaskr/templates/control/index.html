@@ -11,14 +11,12 @@
 
 <img src="{{ url_for('control.video_feed') }}" class="center">
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
 
 <div class = centerdiv>
 
 <input type="submit" class="button" value="Forward" id="forward" onmousedown="forward()" onmouseup="stop()"/><br>
-<input type="submit" value="Left" id="left" class="button"/>
-<input type="submit" value="Right" id="right" class="button"/><br> 
+<input type="submit" class="button" value="Left" id="left" onmousedown="left()" onmouseup="stop()"/><br>
+<input type="submit" class="button" value="Right" id="right" onmousedown="right()" onmouseup="stop()"/><br>
 <input type="submit" class="button" value="Back" id="back" onmousedown="back()" onmouseup="stop()"/>
 
 <script type=text/javascript>
@@ -32,6 +30,14 @@
 
   function stop() {
     $.getJSON('/stop', function(data) {});
+  }
+
+  function left() {
+    $.getJSON('/left', function(data) {});
+  }
+
+  function right() {
+    $.getJSON('/right', function(data) {});
   }
 
   </script>
