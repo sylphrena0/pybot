@@ -9,8 +9,10 @@ from werkzeug.exceptions import abort
 from flaskr.auth import login_required
 from flaskr.db import get_db
 
+#define the motorkit controls
 kit = MotorKit()
 
+#this class is to enable streaming - it essentially makes an object where we can store frames without saving them to a file - modified from a template
 class StreamingOutput(object):
     def __init__(self):
         self.frame = None
@@ -28,8 +30,10 @@ class StreamingOutput(object):
             self.buffer.seek(0)
         return self.buffer.write(buf)
 
+#sets the blueprint for this code
 bp = Blueprint('control', __name__)
 
+#defines a movement function which is called when /movement is accessed
 @bp.route('/forward')
 def forward():
     throttle = 0.4
@@ -94,6 +98,7 @@ def right():
         print("Undefined Throttle")
         return ("nothing")
 
+#defines the index page and controls buttons. control buttons should be removed!
 @bp.route('/', methods=['GET','POST'])
 @login_required
 def index():
@@ -108,6 +113,7 @@ def index():
         return render_template('control/index.html', form=request.form)
     return render_template('control/index.html')
 
+#defines the settings page, currently blank. contains depreciated code from tutorial
 @bp.route('/settings', methods=('GET', 'POST'))
 @login_required
 def settings():
@@ -127,6 +133,7 @@ def settings():
 
     return render_template('control/settings.html')
 
+#defines the function that generates our frames
 def genFrames():
     buffer = StreamingOutput()
     while True:
@@ -138,6 +145,7 @@ def genFrames():
         yield (b'--frame\r\n'
             b'Content-Type: image/jpeg\r\n\r\n' + buffer.frame + b'\r\n')
 
+#defines the route that will access the video feed and call the feed function
 @bp.route('/video_feed')
 def video_feed():
     return Response(genFrames(),
