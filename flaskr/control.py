@@ -12,14 +12,6 @@ from flaskr.db import get_db #access to database
 #define the motorkit controls on init
 kit = MotorKit()
 
-#set default motor speed on init
-db = get_db()
-
-
-
-
-
-
 #this class is to enable streaming - it essentially makes an object where we can store frames without saving them to a file - modified from a template
 class StreamingOutput(object):
     def __init__(self):
