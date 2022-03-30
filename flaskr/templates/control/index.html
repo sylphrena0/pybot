@@ -42,8 +42,8 @@ if (e.keyCode==38 || e.keyCode==40){
   };
 });
 
-  function forward(){$.getJSON('/forward', function(data) {});}  
-  function back(){$.getJSON('/back', function(data) {});}
+  function forward(){$.getJSON('/move?direction=forward', function(data) {});}  
+  function back(){$.getJSON('/move?direction=backward', function(data) {});}
   function stop(){$.getJSON('/stop', function(data) {});}
   function left(){$.getJSON('/left', function(data) {});}
   function right(){$.getJSON('/right', function(data) {});}

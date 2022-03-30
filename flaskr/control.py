@@ -1,6 +1,7 @@
 import io #used to store frames
 import picamera #camera module for RPi camera
 import logging #self-explainatory
+import json #to get data from js
 import socketserver #may be unused?
 from threading import Condition #used for frame storage setup
 from adafruit_motorkit import MotorKit #motor control lib
@@ -34,18 +35,13 @@ class StreamingOutput(object):
 bp = Blueprint('control', __name__)
 
 #defines a movement function which is called when /movement is accessed
-@bp.route('/forward')
-def forward():
-    throttle = 0.4
-    kit.motor1.throttle = throttle
-    kit.motor2.throttle = throttle
-    kit.motor3.throttle = throttle
-    kit.motor4.throttle = throttle
-    return ("nothing")
-
-@bp.route('/back')
-def back():
-    throttle = -0.4
+@bp.route('/move')
+def move():
+    direction = request.arg.get('direction')
+    if direction == 'forward':
+        throttle = 0.4
+    if direction == 'backward':
+        throttle = -0.4
     kit.motor1.throttle = throttle
     kit.motor2.throttle = throttle
     kit.motor3.throttle = throttle
