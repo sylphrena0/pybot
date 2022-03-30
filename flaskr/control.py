@@ -1,10 +1,11 @@
-import io
-import picamera
-import logging
-import socketserver 
-from threading import Condition
-from adafruit_motorkit import MotorKit
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response
+import io #used to store frames
+import picamera #camera module for RPi camera
+import logging #self-explainatory
+import socketserver #may be unused?
+import sqlite3 #access to database
+from threading import Condition #used for frame storage setup
+from adafruit_motorkit import MotorKit #motor control lib
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response #web framework imports
 from werkzeug.exceptions import abort
 from flaskr.auth import login_required
 from flaskr.db import get_db
