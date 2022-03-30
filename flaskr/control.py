@@ -41,7 +41,7 @@ def forward():
     return ("nothing")
 
 @bp.route('/back')
-def forward():
+def back():
     throttle = -0.4
     print("Moving at throttle",throttle)
     kit.motor1.throttle = throttle
