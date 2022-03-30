@@ -37,7 +37,7 @@ bp = Blueprint('control', __name__)
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
 def move():
-    direction = request.arg.get('direction')
+    direction = request.args.get('direction')
     if direction == 'forward':
         throttle = 0.4
     if direction == 'backward':
