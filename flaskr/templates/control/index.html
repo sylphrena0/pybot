@@ -15,7 +15,7 @@
 
 <div class = centerdiv>
 
-<input type="submit" class="button" value="Forward" id="forward" onmousedown="forward()" onmouseup="stop()"/><br>
+<input type="submit" class="button" value="Forward" id="forward" onmousedown="forward()" onmouseup="stop()" style="padding-top: 16;"/><br>
 <input type="submit" class="button" value="Left" id="left" onmousedown="left()" onmouseup="stop()"/>
 <input type="submit" class="button" value="Right" id="right" onmousedown="right()" onmouseup="stop()"/><br>
 <input type="submit" class="button" value="Back" id="back" onmousedown="back()" onmouseup="stop()"/>
@@ -26,7 +26,6 @@ var isActive = {}; //dict for active keys
 
 $(document).keydown(function(e){ //when a key is pressed
 isActive[e.keyCode] = e.type == 'keydown'; //update active key dictionary
-
 if (e.keyCode==38) { //if the key is up
     $.getJSON('/move?command=forward', function(data) {});  //moves forward
 } else if (e.keyCode==40) { //key is down
@@ -53,10 +52,7 @@ if (e.keyCode==38 || e.keyCode==40){ //if the released key is up/down arrow
   };
 });
 
-  function left(){$.getJSON('/left', function(data) {});}
-  function right(){$.getJSON('/right', function(data) {});}
-
-  </script>
+</script>
 
 </div>
 {% endblock %}
