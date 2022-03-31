@@ -98,20 +98,6 @@ def index():
 @bp.route('/settings', methods=('GET', 'POST'))
 @login_required
 def settings():
-
-    if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
-        error = None
-
-        if not title:
-            error = 'Title is required.'
-
-        if error is not None:
-            flash(error)
-        else:
-            return redirect(url_for('control.index'))
-
     return render_template('control/settings.html')
 
 #defines the function that generates our frames
