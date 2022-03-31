@@ -41,7 +41,7 @@ input:checked + .slider:before {-webkit-transform: translateX(26px); -ms-transfo
 .slider.round:before { border-radius: 50%; }
 
 /*Dropdown CSS*/
-.dropbtn { background-color: #35393b; border-radius: 8px; margin-bottom: 20px; color: #dfdfdf; padding: 8px 16px; font-size: 16px; border: none; cursor: pointer; }
+.dropbtn { background-color: #35393b; border-radius: 8px; margin-bottom: 20px; margin-right: 13px; color: #dfdfdf; padding: 8px 16px; font-size: 16px; border: none; cursor: pointer; }
 .dropbtn:hover { border-radius: 8px 8px 0px 0px; }
 .dropdown { position: relative; display: inline-block; }
 .dropdown-content { display: none; position: absolute; background-color: #35393b; min-width: 160px; border-radius: 10px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; }
