@@ -13,7 +13,7 @@ CREATE TABLE settings ( --create settings table
   nightvision BOOLEAN NOT NULL,
   buttoncontrol BOOLEAN NOT NULL,
   keycontrol BOOLEAN NOT NULL,
-  resolution INT NOT NULL
+  resolution STR NOT NULL
 );
 
 INSERT INTO settings VALUES( --insert default values
@@ -22,6 +22,5 @@ INSERT INTO settings VALUES( --insert default values
   1, --nightvision mode (on)
   1, --button mode (on)
   1, --key mode (on)
-  640, --hresolution
-  480 --vresolution
+  '640x480' --hresolution
 )
