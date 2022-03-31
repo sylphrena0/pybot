@@ -9,22 +9,32 @@
 
 {% block content %}
 
+<script defer>
+
+$.getJSON('/getsettings', function(data) {}); //turns left while going backward
+
+//document.getElementById("nightvision").checked = true;
+//document.getElementById("keycontrol").checked = true;
+//document.getElementById("buttoncontrol").checked = false;
+
+</script>
+
 <div style="margin: 20px;">
 <h4 class="switchlabel">Enable Night Vision:</h4>
 <label class="switch">
-  <input type="checkbox" id="keycontrol" checked>
+  <input type="checkbox" id="nightvision" onclick="nightvision()" checked>
   <span class="slider round"></span>
 </label>
 
 <h4 class="switchlabel">Enable Key Control:</h4>
 <label class="switch">
-  <input type="checkbox" id="keycontrol" checked>
+  <input type="checkbox" id="keycontrol" onclick="keycontrol()" checked>
   <span class="slider round"></span>
 </label>
 
 <h4 class="switchlabel">Enable Button Control:</h4>
 <label class="switch">
-  <input type="checkbox" id="buttoncontrol">
+  <input type="checkbox" id="buttoncontrol" onclick="buttoncontrol()">
   <span class="slider round"></span>
 </label>
 </div>
@@ -33,19 +43,32 @@
   <div class="dropdown" style="margin-left:30px">
     <button class="dropbtn">Throttle &nbsp;▼</button>
     <div class="dropdown-content" style="min-width: 112.1px;">
-    <a href="#">Low</a>
-    <a href="#">Medium</a>
-    <a href="#">High</a>
+    <a href="#" onclick="throttle('low')">Low</a>
+    <a href="#" onclick="throttle('medium')">Medium</a>
+    <a href="#" onclick="throttle('high')">High</a'>
     </div>
   </div>
 
   <div class="dropdown">
     <button class="dropbtn">Video Resolution &nbsp;▼</button>
     <div class="dropdown-content" style="min-width: 178.883px;">
-    <a href="#">640x480</a>
-    <a href="#">????</a>
-    <a href="#">????</a>
+    <a href="#" onclick="resolution('low')">640x480</a>
+    <a href="#" onclick="resolution('medium')">????</a>
+    <a href="#" onclick="resolution('high')">????</a>
     </div>
   </div>
 </div>
+
+<script>
+  function nightvision() {
+    var checkBox = document.getElementById("nightvision");
+    if (checkBox.checked == true){
+      //do smthg
+    } else {
+      //do smthg else
+    }
+  }
+</script>
+  
+
 {% endblock %}

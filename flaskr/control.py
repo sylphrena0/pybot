@@ -34,6 +34,14 @@ class StreamingOutput(object):
 #sets the blueprint for this code
 bp = Blueprint('control', __name__)
 
+#defines a settings function which is called when /getsettings is accessed
+@bp.route('/getsettings')
+def getsettings():
+    db = get_db()
+    settings = db.execute( 'SELECT throttle, nightvision, buttoncontrol, keycontrol, resolution FROM settings WHERE id = 1' ).fetchone()
+    print(settings)
+    return Response(settings)
+
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
 def move():
