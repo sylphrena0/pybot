@@ -41,6 +41,7 @@ def getsettings():
     settings = db.execute( 'SELECT throttle, nightvision, buttoncontrol, keycontrol, resolution FROM settings WHERE id = 1' ).fetchone()
     print(settings)
     myobj = {'somekey': 'somevalue'}
+    print(myobj)
     return Response(myobj)
 
 #defines a movement function which is called when /movement is accessed
