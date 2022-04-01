@@ -8,7 +8,7 @@ from adafruit_motorkit import MotorKit #motor control lib
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response #web framework imports
 from werkzeug.exceptions import abort
 from flaskr.auth import login_required
-from flaskr.db import get_db #access to database
+from flaskr.db import get_db,close_db #access to database
 
 #define the motorkit controls on init
 kit = MotorKit()
