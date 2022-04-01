@@ -40,7 +40,7 @@ def getsettings():
     db = get_db()
     settings = db.execute( 'SELECT throttle, nightvision, buttoncontrol, keycontrol, resolution FROM settings WHERE id = 1' )
     print(settings)
-    return Response(myobj)
+    return Response(settings)
 
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
