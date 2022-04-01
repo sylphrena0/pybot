@@ -39,6 +39,7 @@ bp = Blueprint('control', __name__)
 def getsettings():
     db = get_db()
     settings = db.execute( 'SELECT throttle, nightvision, buttoncontrol, keycontrol, resolution FROM settings WHERE id = 1' )
+    session.clear()
     print(settings)
     return Response(settings)
 
