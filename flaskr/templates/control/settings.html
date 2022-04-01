@@ -66,6 +66,7 @@
       //do smthg else
     }
   }
+  function getsettings() {
   const Http = new XMLHttpRequest();
   const url='/getsettings';
   Http.open("GET", url);
@@ -74,6 +75,7 @@
   Http.onreadystatechange = (e) => {
     console.log(Http.responseText)
   }
+}
 </script>
   
 
