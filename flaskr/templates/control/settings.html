@@ -20,19 +20,19 @@
 <div style="margin: 20px;">
 <h4 class="switchlabel">Enable Night Vision:</h4>
 <label class="switch">
-  <input type="checkbox" id="nightvision" onclick="getsettings()" checked>
+  <input type="checkbox" id="nightvision" onclick="nightvision()" checked>
   <span class="slider round"></span>
 </label>
 
 <h4 class="switchlabel">Enable Key Control:</h4>
 <label class="switch">
-  <input type="checkbox" id="keycontrol" onclick="getsettings()" checked>
+  <input type="checkbox" id="keycontrol" onclick="keycontrol()" checked>
   <span class="slider round"></span>
 </label>
 
 <h4 class="switchlabel">Enable Button Control:</h4>
 <label class="switch">
-  <input type="checkbox" id="buttoncontrol" onclick="getsettings()">
+  <input type="checkbox" id="buttoncontrol" onclick="buttoncontrol()">
   <span class="slider round"></span>
 </label>
 </div>
@@ -66,8 +66,13 @@
       //do smthg else
     }
   }
-  function getsettings() {
-    $.getJSON('/getsettings', function(data) {});
+  const Http = new XMLHttpRequest();
+  const url='https://jsonplaceholder.typicode.com/posts';
+  Http.open("GET", url);
+  Http.send();
+
+  Http.onreadystatechange = (e) => {
+    console.log(Http.responseText)
   }
 </script>
   
