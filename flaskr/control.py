@@ -45,7 +45,7 @@ def getsettings():
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
 def move():
-    speed = 0.4
+    speed = 0.8
     command = request.args.get('command')
 
     #parse commands from request and set speed
@@ -59,7 +59,7 @@ def move():
         direction = request.args.get('direction')
         if speed >= 0.7:
             throttleL = speed
-            throttleR = speed - 0.3
+            throttleR = speed - 0.4
         elif speed < 0.7:
             throttleL = speed + 0.3
             throttleR = speed
@@ -71,7 +71,7 @@ def move():
     elif command == 'leftTurn':
         direction = request.args.get('direction')
         if speed >= 0.7:
-            throttleL = speed - 0.3
+            throttleL = speed - 0.4
             throttleR = speed
         elif speed < 0.7:
             throttleL = speed

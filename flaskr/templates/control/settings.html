@@ -10,9 +10,9 @@
 {% block content %}
 
 <script defer>
-
-$.getJSON('/getsettings', function(data) {}); //turns left while going backward
-
+function getsettings() {
+  $.getJSON('/getsettings', function(data) {});
+}
 //document.getElementById("nightvision").checked = true;
 //document.getElementById("keycontrol").checked = true;
 //document.getElementById("buttoncontrol").checked = false;
