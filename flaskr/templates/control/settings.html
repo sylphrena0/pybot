@@ -9,10 +9,8 @@
 
 {% block content %}
 
-<script defer>
-function getsettings() {
-  $.getJSON('/getsettings', function(data) {});
-}
+<script>
+
 //document.getElementById("nightvision").checked = true;
 //document.getElementById("keycontrol").checked = true;
 //document.getElementById("buttoncontrol").checked = false;
@@ -22,7 +20,7 @@ function getsettings() {
 <div style="margin: 20px;">
 <h4 class="switchlabel">Enable Night Vision:</h4>
 <label class="switch">
-  <input type="checkbox" id="nightvision" onclick="getsettings()" checked>
+  <input type="checkbox" id="nightvision" onclick="nightvision()" checked>
   <span class="slider round"></span>
 </label>
 
@@ -67,6 +65,9 @@ function getsettings() {
     } else {
       //do smthg else
     }
+  }
+  function getsettings() {
+    $.getJSON('/getsettings', function(data) {});
   }
 </script>
   
