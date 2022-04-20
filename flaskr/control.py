@@ -47,6 +47,7 @@ def getsettings():
 @bp.route('/move')
 def move():
     speed = 0.8
+    turnSpeed = 0.4
     command = request.args.get('command')
 
     #parse commands from request and set speed
@@ -65,12 +66,18 @@ def move():
             throttleL = speed + 0.3
             throttleR = speed
 
-        if direction == 'backward': #checks if going backward or forward and changes direction 
+        if direction == 'forward': #checks if the car is already going forward. If so, no change is needed
+            pass
+        elif direction == 'backward': #checks if going backward and changes direction if so
             throttleL *= -1
             throttleR *= -1
+        else: #if no direction, the car doesn't move during the turn
+            throttleL = -turnSpeed
+            throttleR = turnSpeed
 
     elif command == 'leftTurn':
-        direction = request.args.get('direction')
+        direction = request.args.get('direction') #no set directions assumes the direction is forward
+
         if speed >= 0.7:
             throttleL = speed - 0.4
             throttleR = speed
@@ -78,9 +85,14 @@ def move():
             throttleL = speed
             throttleR = speed + 0.3
 
-        if direction == 'backward': #checks if going backward or forward and changes direction
+        if direction == 'forward': #checks if the car is already going forward. If so, no change is needed
+            pass
+        elif direction == 'backward': #checks if going backward and changes direction if so
             throttleL *= -1
             throttleR *= -1
+        else: #if no direction, the car doesn't move during the turn
+            throttleL = -turnSpeed
+            throttleR = turnSpeed
 
     kit.motor1.throttle = throttleL
     kit.motor2.throttle = throttleL
