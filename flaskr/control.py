@@ -72,8 +72,8 @@ def move():
             throttleL *= -1
             throttleR *= -1
         else: #if no direction, the car doesn't move during the turn
-            throttleL = -turnSpeed
-            throttleR = turnSpeed
+            throttleL = turnSpeed
+            throttleR = -turnSpeed
 
     elif command == 'leftTurn':
         direction = request.args.get('direction') #no set directions assumes the direction is forward
