@@ -29,7 +29,7 @@ var left = false;
 var right = false;
 
 $(document).keydown(function(e){ //when a key is pressed
-isActive[e.keyCode] = e.type == 'keydown'; //update active key dictionary
+isActive[e.keyCode] = e.type == 'keydown'; //update active key dictionary - https://keycode.info/
 
 //define forward and back conditions
 if (e.keyCode==38 && !isActive[37] && !isActive[39] && !isActive[40] && !up) { //if the key is up and no other arrows are being pressed, and this is the first call
@@ -40,7 +40,7 @@ if (e.keyCode==38 && !isActive[37] && !isActive[39] && !isActive[40] && !up) { /
     down = true
 //define left and right conditions
 } else if (e.keyCode==37 && !isActive[39] && !isActive[38] && !isActive[40] && !left) { //key is left and no other arrows are being pressed, and this is the first call
-    $.getJSON('/move?command=leftTurn', function(data) {}); //turns left
+    $.getJSON('/move?command=leftTurn&direction=stationary', function(data) {}); //turns left
     left = true
 } else if (e.keyCode==39 && !isActive[37] && !isActive[38] && !isActive[40] && !right) { //key is right and no other arrows are being pressed, and this is the first call
     $.getJSON('/move?command=rightTurn', function(data) {}); //turns right

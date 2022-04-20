@@ -71,7 +71,7 @@ def move():
         elif direction == 'backward': #checks if going backward and changes direction if so
             throttleL *= -1
             throttleR *= -1
-        else: #if no direction, the car doesn't move during the turn
+        elif direction == 'stationary': #if no direction, the car doesn't move during the turn
             throttleL = turnSpeed
             throttleR = -turnSpeed
 
