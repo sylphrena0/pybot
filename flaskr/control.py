@@ -47,8 +47,7 @@ def getsettings():
 @bp.route('/move')
 def move():
     speed = 0.8
-    turnSpeed = 0.4
-    command = request.args.get('command')
+    command = request.args.get('command') #stores command arguement from get requests
 
     #parse commands from request and set speed
     if command == 'forward':
@@ -59,31 +58,31 @@ def move():
         throttleL, throttleR = 0, 0
     elif command == 'rightTurn':
         direction = request.args.get('direction')
-        if speed >= 0.7:
+        if speed >= 0.8:
             throttleL = speed
-            throttleR = speed - 0.4
-        elif speed < 0.7:
-            throttleL = speed + 0.3
-            throttleR = speed
+            throttleR = speed - 0.5
+        elif speed < 0.8:
+            throttleL = speed + 0.2
+            throttleR = speed - 0.2
 
         if direction == 'forward': #checks if the car is already going forward. If so, no change is needed
             pass
         elif direction == 'backward': #checks if going backward and changes direction if so
             throttleL *= -1
             throttleR *= -1
-        '''elif direction == 'stationary': #if no direction, the car doesn't move during the turn - doesn't work with current motors and wheels
+        '''elif direction == 'stationary': #if no direction, the car doesn't move during the turn - doesn't work with current motors and wheels - turnSpeed = 0.4
             throttleL = turnSpeed
             throttleR = -turnSpeed'''
 
     elif command == 'leftTurn':
         direction = request.args.get('direction') #no set directions assumes the direction is forward
 
-        if speed >= 0.7:
-            throttleL = speed - 0.4
+        if speed >= 0.8:
+            throttleL = speed - 0.5
             throttleR = speed
-        elif speed < 0.7:
-            throttleL = speed
-            throttleR = speed + 0.3
+        elif speed < 0.8:
+            throttleL = speed - 0.2
+            throttleR = speed + 0.2
 
         if direction == 'forward': #checks if the car is already going forward. If so, no change is needed
             pass
