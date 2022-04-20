@@ -40,7 +40,7 @@ if (e.keyCode==38 && !isActive[37] && !isActive[39] && !isActive[40] && !up) { /
     $.getJSON('/move?command=backward', function(data) {}); //moves backward 
     down = true
     console.log("moving backwards")
-//define left and right conditions
+/* define left and right conditions - these do not work with current motors and wheels
 } else if (e.keyCode==37 && !isActive[39] && !isActive[38] && !isActive[40] && !left) { //key is left and no other arrows are being pressed, and this is the first call
     $.getJSON('/move?command=leftTurn&direction=stationary', function(data) {}); //turns left
     console.log("turning left")
@@ -48,7 +48,7 @@ if (e.keyCode==38 && !isActive[37] && !isActive[39] && !isActive[40] && !up) { /
 } else if (e.keyCode==39 && !isActive[37] && !isActive[38] && !isActive[40] && !right) { //key is right and no other arrows are being pressed, and this is the first call
     $.getJSON('/move?command=rightTurn', function(data) {}); //turns right
     console.log("turning right")
-    right = true
+    right = true */
 //define combinations of left/right and forward/back conditions
 } else if (e.keyCode==37 && isActive[38] && !isActive[40] && !isActive[39]) { //if current key event is left arrow, up arrow is active, and no other keys are being pressed
     $.getJSON('/move?command=leftTurn&direction=forward', function(data) {}); //turns left

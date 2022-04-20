@@ -71,9 +71,9 @@ def move():
         elif direction == 'backward': #checks if going backward and changes direction if so
             throttleL *= -1
             throttleR *= -1
-        elif direction == 'stationary': #if no direction, the car doesn't move during the turn
+        '''elif direction == 'stationary': #if no direction, the car doesn't move during the turn - doesn't work with current motors and wheels
             throttleL = turnSpeed
-            throttleR = -turnSpeed
+            throttleR = -turnSpeed'''
 
     elif command == 'leftTurn':
         direction = request.args.get('direction') #no set directions assumes the direction is forward
@@ -90,10 +90,9 @@ def move():
         elif direction == 'backward': #checks if going backward and changes direction if so
             throttleL *= -1
             throttleR *= -1
-        else: #if no direction, the car doesn't move during the turn
+        '''else: #if no direction, the car doesn't move during the turn
             throttleL = -turnSpeed
-            throttleR = turnSpeed
-
+            throttleR = turnSpeed'''
     kit.motor1.throttle = throttleL
     kit.motor2.throttle = throttleL
     kit.motor3.throttle = throttleR
