@@ -54,19 +54,23 @@ if (e.keyCode==38 && !isActive[37] && !isActive[39] && !isActive[40] && !up) { /
     if (isActive[38]) {
       $.getJSON('/move?command=leftTurn&direction=forward', function(data) {}); //turns left
       up = true;
+      console.log("turning left (forward)")
     } else if (isActive[40]){
       $.getJSON('/move?command=leftTurn&direction=backward', function(data) {}); //turns left while going backward
       down = true;
+      console.log("turning left (backward)")
     };
   left = true;
 
 } else if ([39,40,38].includes(e.keyCode) && (isActive[39] && isActive[40]) || (isActive[39] && isActive[40]) && !isActive[37]) { //if current key event is right arrow and up is currently active
     if (isActive[38]) {
-        $.getJSON('/move?command=rightTurn&direction=forward', function(data) {}); //turns left
+        $.getJSON('/move?command=rightTurn&direction=forward', function(data) {}); //turns right
         up = true;
-      } else if (isActive[40]){
-        $.getJSON('/move?command=rightTurn&direction=backward', function(data) {}); //turns left while going backward
+        console.log("turning right (forward)")
+    } else if (isActive[40]){
+        $.getJSON('/move?command=rightTurn&direction=backward', function(data) {}); //turns right while going backward
         down = true;
+        console.log("turning right (backward)")
       };
     right = true;
   };
