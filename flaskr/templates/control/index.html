@@ -35,15 +35,19 @@ isActive[e.keyCode] = e.type == 'keydown'; //update active key dictionary - http
 if (e.keyCode==38 && !isActive[37] && !isActive[39] && !isActive[40] && !up) { //if the key is up and no other arrows are being pressed, and this is the first call
     $.getJSON('/move?command=forward', function(data) {});  //moves forward
     up = true //sets the first call flag
+    console.log("moving forward")
 } else if (e.keyCode==40 && !isActive[37] && !isActive[39] && !isActive[38] && !down) { //key is down and no other arrows are being pressed, and this is the first call
     $.getJSON('/move?command=backward', function(data) {}); //moves backward 
     down = true
+    console.log("moving backwards")
 //define left and right conditions
 } else if (e.keyCode==37 && !isActive[39] && !isActive[38] && !isActive[40] && !left) { //key is left and no other arrows are being pressed, and this is the first call
     $.getJSON('/move?command=leftTurn&direction=stationary', function(data) {}); //turns left
+    console.log("turning left")
     left = true
 } else if (e.keyCode==39 && !isActive[37] && !isActive[38] && !isActive[40] && !right) { //key is right and no other arrows are being pressed, and this is the first call
     $.getJSON('/move?command=rightTurn', function(data) {}); //turns right
+    console.log("turning right")
     right = true
 //define combinations of left/right and forward/back conditions
 } else if (e.keyCode==37 && isActive[38] && !isActive[40] && !isActive[39]) { //if current key event is left arrow, up arrow is active, and no other keys are being pressed
