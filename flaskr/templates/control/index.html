@@ -88,11 +88,9 @@ if (e.keyCode==38 || e.keyCode==40){ //if the released key is up/down arrow
     sleep(100); //debounce of 100ms
     up = false //resets first call flag
     down = false //resets first call flag
-} else if ((e.keyCode==39 || e.keyCode==37) && isActive[38]) { //if current key event is left/right arrow and up is currently active
-   left = false
-   right = false
-} else if ((e.keyCode==39 || e.keyCode==37) && isActive[40]) { //if current key event is left/right arrow and down is currently active
+} else if ((e.keyCode==37) { //if current key event is left
     left = false
+} else if ((e.keyCode==39) { //if current key event is right
     right = false
   };
 });
