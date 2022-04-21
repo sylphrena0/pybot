@@ -87,7 +87,8 @@ if (e.keyCode==38 || e.keyCode==40){ //if the released key is up/down arrow
     await sleep(100); //debounce of 100ms
     up = false //resets first call flag
     down = false //resets first call flag
-} else if ((e.keyCode==39 || e.keyCode==37) && isActive[38]) { //if current key event is left/right arrow and up is currently active
+};
+/* else if ((e.keyCode==39 || e.keyCode==37) && isActive[38]) { //if current key event is left/right arrow and up is currently active
    $.getJSON('/move?command=forward', function(data) {});  //continues forward, ending the turn
    left = false
    right = false
@@ -95,7 +96,7 @@ if (e.keyCode==38 || e.keyCode==40){ //if the released key is up/down arrow
     $.getJSON('/move?command=backward', function(data) {}); //continues forward, ending the turn
     left = false
     right = false
-  };
+  };*/
 });
 
 </script>
