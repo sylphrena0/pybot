@@ -84,7 +84,7 @@ $(document).keyup(function(e){ //when a key is released
 isActive[e.keyCode] = e.type == 'keydown';  //update active key dictionary
 if (e.keyCode==38 || e.keyCode==40){ //if the released key is up/down arrow
     $.getJSON('/move?command=stop', function(data) {}); //stops the car
-    await sleep(100); //debounce of 100ms
+    //await sleep(100); //debounce of 100ms
     up = false //resets first call flag
     down = false //resets first call flag
 };
