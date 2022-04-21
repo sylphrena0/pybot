@@ -54,7 +54,7 @@ if (e.keyCode==38 && !isActive[37] && !isActive[39] && !isActive[40] && !up) { /
     console.log("turning right")
     right = true */
 //define combinations of left/right and forward/back conditions
-} else if ([37,40,38].includes(e.keyCode) && (isActive[37] && isActive[40]) || (isActive[37] && isActive[38]) && !isActive[39]) { //if current key event is left arrow, up arrow is active, and no other keys are being pressed
+} else if ([37,40,38].includes(e.keyCode) && (isActive[37] && isActive[40]) || (isActive[37] && isActive[38]) && !isActive[39] && !left) { //if current key event is left arrow, up arrow is active, and no other keys are being pressed
     if (isActive[38]) {
       $.getJSON('/move?command=leftTurn&direction=forward', function(data) {}); //turns left
       up = true;
@@ -66,7 +66,7 @@ if (e.keyCode==38 && !isActive[37] && !isActive[39] && !isActive[40] && !up) { /
     };
   left = true;
 
-} else if ([38,39,40].includes(e.keyCode) && (isActive[39] && isActive[40]) || (isActive[39] && isActive[38]) && !isActive[37]) { //if current key event is right arrow and up is currently active
+} else if ([38,39,40].includes(e.keyCode) && (isActive[39] && isActive[40]) || (isActive[39] && isActive[38]) && !isActive[37] && !right) { //if current key event is right arrow and up is currently active
     if (isActive[38]) {
         $.getJSON('/move?command=rightTurn&direction=forward', function(data) {}); //turns right
         up = true;
