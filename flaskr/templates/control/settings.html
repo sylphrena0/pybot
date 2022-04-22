@@ -10,11 +10,24 @@
 {% block content %}
 
 <script>
+  //script will get current toggle setting from database and update toggles accordingly
+  $(document).ready(function(){
+      $.getJSON('/getsettings', function(settings) {
+        var throttle = settings[0][0];
+        var nightVision = settings[0][1];
+        var keyControl = settings[0][2];
+        var buttonControl = settings[0][3]
+        var resolution = settings[0][3]
 
-//document.getElementById("nightvision").checked = true;
-//document.getElementById("keycontrol").checked = true;
-//document.getElementById("buttoncontrol").checked = false;
-
+        if (nightVision == 1){
+          document.getElementById("nightvision").checked = true;
+        } if (keyControl == 1){
+          document.getElementById("keycontrol").checked = true;
+        } if (buttonControl == 1){
+          document.getElementById("buttoncontrol").checked = true;
+        };
+    });
+  });
 </script>
 
 <div style="margin: 20px;">
@@ -58,24 +71,14 @@
 </div>
 
 <script>
-  function nightvision() {
-    var checkBox = document.getElementById("nightvision");
-    if (checkBox.checked == true){
-      //do smthg
-    } else {
-      //do smthg else
-    }
-  }
-  function getsettings() {
-  const Http = new XMLHttpRequest();
-  const url='/getsettings';
-  Http.open("GET", url);
-  Http.send();
-
-  Http.onreadystatechange = (e) => {
-    console.log(Http.responseText)
-  }
-}
+  $(document).ready(function(){
+    $(":checkbox").click(function(event) {
+      id = $(this).attr('id')
+      checked = document.getElementById(id).checked
+      if (checked) {var value = 1} else {var value = 0}; //$(this).attr('checked') gets value of clicked element
+      $.getJSON(`/changesetting?command=${id}&value=${value}`, function(data) {});
+    });
+  });
 </script>
   
 

@@ -36,6 +36,7 @@ bp = Blueprint('control', __name__)
 
 #defines a settings function which is called when /getsettings is accessed
 @bp.route('/getsettings')
+@login_required
 def getsettings():
     db = get_db()
     settings = db.execute( 'SELECT throttle, nightvision, buttoncontrol, keycontrol, resolution FROM settings WHERE id = 1' )
@@ -45,6 +46,7 @@ def getsettings():
 
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
+@login_required #important, this requires a login so bad actors cannot control the car without logging in
 def move():
     speed = 0.8
     command = request.args.get('command') #stores command arguement from get requests
@@ -120,6 +122,7 @@ def settings():
     return render_template('control/settings.html')
 
 #defines the function that generates our frames
+@login_required
 def genFrames():
     buffer = StreamingOutput()
     while True:
@@ -133,6 +136,7 @@ def genFrames():
 
 #defines the route that will access the video feed and call the feed function
 @bp.route('/video_feed')
+@login_required
 def video_feed():
     return Response(genFrames(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
