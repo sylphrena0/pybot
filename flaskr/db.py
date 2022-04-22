@@ -28,6 +28,9 @@ def init_db():
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
 
+    #make default user
+    db.execute("INSERT INTO user (username, password) VALUES (?, ?)",    ('admin', generate_password_hash('administrator')),)
+    db.commit()
 
 @click.command('init-db')
 @with_appcontext
