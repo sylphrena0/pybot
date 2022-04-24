@@ -3,6 +3,7 @@ import picamera #camera module for RPi camera
 import logging #self-explainatory
 import json #to get data from js
 import socketserver #may be unused?
+import RPi.GPIO as GPIO
 from threading import Condition #used for frame storage setup
 from adafruit_motorkit import MotorKit #motor control lib
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response #web framework imports
@@ -34,6 +35,25 @@ class StreamingOutput(object):
 #sets the blueprint for this code
 bp = Blueprint('control', __name__)
 
+def updateSettings():
+    db = get_db()
+    settings_list = db.execute('SELECT * FROM settings WHERE id = 1') #grab settings data
+    #settings['throttle'] settings['nightvision'] settings['buttoncontrol'] settings['keycontrol'] settings['resolution'] 
+
+    #set nightvision mode
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(24, GPIO.OUT)
+    if settings['nightvision'] == 1:
+        GPIO.output(24, GPIO.LOW)
+        print("Nightvision enabled")
+    else:
+        GPIO.output(24, GPIO.HIGH)
+        print("Nightvision disabled")
+
+
+updateSettings()
+
 #defines a settings function which is called when /getsettings is accessed
 @bp.route('/getsettings')
 @login_required
@@ -43,6 +63,7 @@ def getsettings():
     data = []
     data.append(list(settings))
     print(data)
+    updateSettings()
     return Response(json.dumps(data))
 
 #defines a settings function which is called when /changesetting is accessed
