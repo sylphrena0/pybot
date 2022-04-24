@@ -1,10 +1,6 @@
 import functools
-
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
-)
+from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, session
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from flaskr.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -36,7 +32,7 @@ def login_required(view):
     return wrapped_view
 
 @bp.route('/register', methods=('GET', 'POST'))
-@login_required #cannot create new user unless already registered!
+@login_required #cannor create new user unless already registered!
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -90,3 +86,31 @@ def login():
         flash(error)
 
     return render_template('auth/login.html')
+
+@bp.route('/user', methods=('GET', 'POST'))
+@login_required
+def user():
+    if request.method == 'POST':
+        oldpassword = request.form['oldpassword']
+        password = request.form['newpassword']
+        user_id = session["user_id"]
+
+        db = get_db()
+
+        error = None
+
+        if not oldpassword or not password: #check that the form is complete
+            error = 'All fields are required.'
+
+        user_data = db.execute('SELECT * FROM user WHERE id = {}'.format(user_id,)).fetchone() #grab user data
+
+        if user_data is None: #catch database errors
+            error = 'Database error.'
+        elif not check_password_hash(user_data['password'], oldpassword): #check that the old password is correct
+            error = 'Incorrect password.'
+
+        print("UPDATE user SET password = '{}' WHERE id = '{}'".format(generate_password_hash(password),user_id))
+        db.execute("UPDATE user SET password = '{}' WHERE id = '{}'".format(generate_password_hash(password),user_id)) #update password
+        db.commit()
+
+    return render_template('auth/user.html')

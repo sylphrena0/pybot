@@ -39,10 +39,25 @@ bp = Blueprint('control', __name__)
 @login_required
 def getsettings():
     db = get_db()
-    settings = db.execute( 'SELECT throttle, nightvision, buttoncontrol, keycontrol, resolution FROM settings WHERE id = 1' )
-    #close_db()
-    #print(settings)
-    return Response(settings)
+    settings = db.execute( 'SELECT throttle, nightvision, keycontrol, buttoncontrol, resolution FROM settings WHERE id = 1' ).fetchone()
+    data = []
+    data.append(list(settings))
+    print(data)
+    return Response(json.dumps(data))
+
+#defines a settings function which is called when /changesetting is accessed
+@bp.route('/changesetting')
+@login_required
+def changesetting():
+    command = request.args.get('command') #stores command arguement from get requests
+    value = request.args.get('value')
+
+    db = get_db()
+    print("UPDATE settings SET {} = {} WHERE id = 1".format(command,value))
+    db.execute("UPDATE settings SET {} = {} WHERE id = 1".format(command,value))
+    db.commit()    
+
+    return Response("nothing")
 
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')

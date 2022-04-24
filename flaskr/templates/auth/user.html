@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}User Settings{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('control.index') }}">Control</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    <div class="container">
+        <input type="password" name="oldpassword" class="input-1" style="grid-column: span 4;" placeholder="Old Password" />
+        <input type="password" name="newpassword" class="input-1" style="grid-column: span 4;" placeholder="New Password" />
+        <input class="button-1" style="grid-column: span 4; width: 70%;" type="submit" value="Change Password">
+    </div>   
+</form>
+
+<a href="{{ url_for('auth.register') }}" class="button-1">Register new user</a>
+{% endblock %}
