@@ -65,7 +65,6 @@ if (e.keyCode==38 && !isActive[37] && !isActive[39] && !isActive[40] && !up) { /
       console.log("turning left (backward)")
     };
   left = true;
-  console.log("left marked")
 
 } else if ([38,39,40].includes(e.keyCode) && ((isActive[39] && isActive[40]) || (isActive[39] && isActive[38])) && !isActive[37] && !right) { //if current key event is right arrow and up is currently active
     if (isActive[38]) {
@@ -82,7 +81,7 @@ if (e.keyCode==38 && !isActive[37] && !isActive[39] && !isActive[40] && !up) { /
 });
 
 $(document).keyup(function(e){ //when a key is released
-isActive[e.keyCode] = !(e.type == 'keydown');  //update active key dictionary
+isActive[e.keyCode] = e.type == 'keydown';  //update active key dictionary
 if (e.keyCode==38 || e.keyCode==40){ //if the released key is up/down arrow
     sleep(100); //debounce of 100ms, hopefully prevents car from moving after stop is releasted
     $.getJSON('/move?command=stop', function(data) {}); //stops the car
