@@ -89,12 +89,10 @@ if (e.keyCode==38 || e.keyCode==40){ //if the released key is up/down arrow
     down = false //resets first call flag
 } else if ([37,39].includes(e.keyCode) && isActive[38]) { //if current key event is left/right arrow and up is currently active
    $.getJSON('/move?command=forward', function(data) {});  //continues forward, ending the turn
-   print("end turn!!")
    left = false
    right = false
 } else if ([37,39].includes(e.keyCode) && isActive[40]) { //if current key event is left/right arrow and down is currently active
     $.getJSON('/move?command=backward', function(data) {}); //continues forward, ending the turn
-    print("end turn!!")
     left = false
     right = false
   }
