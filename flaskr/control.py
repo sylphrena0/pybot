@@ -110,7 +110,7 @@ def move():
             throttleR *= -1
         '''elif direction == 'stationary': #if no direction, the car doesn't move during the turn - doesn't work with current motors and wheels - turnSpeed = 0.4
             throttleL = turnSpeed
-            throttleR = -turnSpeed'''
+            throttleR = -turnSpeeMesh data file. Mesh data files are provided. Create a folder called “data” in your output directory. Download and install the maze data text files in that folder. Your maze program should be compiled and exported as a runnable jar file called maze.jar. An example invocation is as follows:d'''
 
     elif command == 'leftTurn':
         direction = request.args.get('direction') #no set directions assumes the direction is forward
@@ -131,9 +131,9 @@ def move():
             throttleL = -turnSpeed
             throttleR = turnSpeed'''
     kit.motor1.throttle = throttleL
-    kit.motor2.throttle = throttleL
+    kit.motor2.throttle = -throttleL
     kit.motor3.throttle = throttleR
-    kit.motor4.throttle = throttleR
+    kit.motor4.throttle = -throttleR
     return ("nothing")
 
 #defines the index page and controls buttons. control buttons should be removed!
