@@ -1,11 +1,8 @@
 {% extends 'base.html' %}
 
-{% block header %}
-  <h1>{% block title %}Control{% endblock %}</h1>
-  {% if g.user %}
-  <a class="action" href="{{ url_for('car.settings') }}">Settings</a>
-  {% endif %}
-{% endblock %}
+{% block title %}Home{% endblock %}
+
+{% set active_page = "home" %}
 
 {% block content %}
 
