@@ -16,6 +16,21 @@ def get_db():
 
     return g.db
 
+#custom logging function that prints and sends to database. also deletes old messages
+def log(level,message):
+    timestamp = datetime.now().strftime("%m/%d/%Y: %H:%M:%S")
+    int_level = ["DEBUG","INFO","WARN","ERROR","CRIT"].index(level.upper())
+    try:
+        db = get_db()
+        db.execute("DELETE FROM logging WHERE id NOT IN (SELECT id FROM logging WHERE lvl <> 0 ORDER BY id DESC LIMIT 500) AND lvl <> 0") #remove old logs that aren't DEBUG
+        db.execute("DELETE FROM logging WHERE id NOT IN (SELECT id FROM logging WHERE lvl = 0 ORDER BY id DESC LIMIT 250) AND lvl = 0") #remove old logs that are DEBUG
+        db.commit()
+        db.execute("INSERT INTO logging (datetime, lvl, msg) VALUES (?, ?, ?)", (timestamp, int_level, message), )
+        print(timestamp,"-",message)
+        db.commit()
+    except Exception:
+        print("Critical Error: Could not log to database!")
+        print(traceback.format_exc())
 
 def close_db(e=None):
     db = g.pop('db', None)

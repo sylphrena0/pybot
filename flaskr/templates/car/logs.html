@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Logs{% endblock %}
+
+{% set active_page = "logs" %}
+
+{% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    //script will get current toggle setting from database and update toggles accordingly
+    $(document).ready(function(){
+        lvl = document.getElementById("debug").value
+        $.getJSON(`/admin/getlogs?lvl=${lvl}`, function(logging) {
+          var logs = logging.join("\n");
+          document.getElementById("logs").textContent=logs;
+      });
+    });
+</script>
+
+<pre>
+    <code id="logs" title="Logs update automatically every 30 seconds">
+      Javascript hasn't loaded the logs yet!
+    </code>
+</pre>
+
+<div class="centerdiv">
+
+<select id="debug" name="debug" class="input" title="Set debug level" style="height: 50px; width: 20%; color: #9d9d9d; margin:20px;">
+    <option value=4>CRIT</option>
+    <option value=3>ERROR</option>
+    <option value=2>WARN</option>
+    <option value=1 selected>INFO</option>
+    <option value=0>DEBUG</option>
+</select>
+
+<input name="update" class="button-1" type="submit" value="Update Debug Level" onclick="updateLogs()">
+<form style="display: inline-block;" method="post"><input name="clear" class="button-1" type="submit" value="Clear Logs" onclick="updateLogs()"></form>
+</div>
+
+  <script>
+    function updateLogs(){
+        lvl = document.getElementById("debug").value
+        $.getJSON(`/getlogs?lvl=${lvl}`, function(logging) {
+          var logs = logging.join("\n");
+          document.getElementById("logs").textContent=logs;
+      });
+    };
+
+    setInterval(function(){
+        updateLogs()}, 30000);
+
+  </script>
+
+{% endblock %}

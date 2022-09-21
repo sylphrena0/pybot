@@ -13,52 +13,30 @@ from flaskr.db import get_db,close_db #access to database
 #define the motorkit controls on init
 kit = MotorKit()
 
-#this class is to enable streaming - it essentially makes an object where we can store frames without saving them to a file - modified from a template
-class StreamingOutput(object):
-    def __init__(self):
-        self.frame = None
-        self.buffer = io.BytesIO()
-        self.condition = Condition()
-
-    def write(self, buf):
-        if buf.startswith(b'\xff\xd8'):
-            # New frame, copy the existing buffer's content and notify all
-            # clients it's available
-            self.buffer.truncate()
-            with self.condition:
-                self.frame = self.buffer.getvalue()
-                self.condition.notify_all()
-            self.buffer.seek(0)
-        return self.buffer.write(buf)
-
 #sets the blueprint for this code
 bp = Blueprint('car', __name__)
 
-#defines a settings function which is called when /getsettings is accessed
-@bp.route('/getsettings')
+############################################
+############### [Home Route] ###############
+############################################
+#defines the index page and controls buttons. control buttons should be removed!
+@bp.route('/', methods=['GET','POST'])
 @login_required
-def getsettings():
-    db = get_db()
-    settings = db.execute( 'SELECT throttle, nightvision, keycontrol, buttoncontrol, resolution FROM settings WHERE id = 1' ).fetchone()
-    data = []
-    data.append(list(settings))
-    print(data)
-    return Response(json.dumps(data))
+def index():
+    # if request.method == 'POST':
+    #     if request.form.get('forward') == 'VALUE1':
+    #         print("worked1")
+    #     elif  request.form.get('back') == 'VALUE2':
+    #         print("worked2")
+    #     else:
+    #         pass # unknown
+    # elif request.method == 'GET':
+    #     return render_template('car/index.html', form=request.form)
+    return render_template('car/index.html')
 
-#defines a settings function which is called when /changesetting is accessed
-@bp.route('/changesetting')
-@login_required
-def changesetting():
-    command = request.args.get('command') #stores command arguement from get requests
-    value = request.args.get('value')
-
-    db = get_db()
-    print("UPDATE settings SET {} = {} WHERE id = 1".format(command,value))
-    db.execute("UPDATE settings SET {} = {} WHERE id = 1".format(command,value))
-    db.commit()    
-
-    return Response("nothing")
-
+############################################
+############# [Movement Route] #############
+############################################ 
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
 @login_required #important, this requires a login so bad actors cannot control the car without logging in
@@ -115,26 +93,85 @@ def move():
     kit.motor4.throttle = -throttleR #right back
     return ("nothing")
 
-#defines the index page and controls buttons. control buttons should be removed!
-@bp.route('/', methods=['GET','POST'])
+###########################################
+############ [Settings Routes] ############
+########################################### 
+#defines a settings function which is called when /getsettings is accessed
+@bp.route('/getsettings')
 @login_required
-def index():
-    if request.method == 'POST':
-        if request.form.get('forward') == 'VALUE1':
-            print("worked1")
-        elif  request.form.get('back') == 'VALUE2':
-            print("worked2")
-        else:
-            pass # unknown
-    elif request.method == 'GET':
-        return render_template('car/index.html', form=request.form)
-    return render_template('car/index.html')
+def getsettings():
+    db = get_db()
+    settings = db.execute( 'SELECT throttle, nightvision, keycontrol, buttoncontrol, resolution FROM settings WHERE id = 1' ).fetchone()
+    data = []
+    data.append(list(settings))
+    print(data)
+    return Response(json.dumps(data))
 
-#defines the settings page, currently blank. contains depreciated code from tutorial
+#defines a settings function which is called when /changesetting is accessed
+@bp.route('/changesetting')
+@login_required
+def changesetting():
+    command = request.args.get('command') #stores command arguement from get requests
+    value = request.args.get('value')
+
+    db = get_db()
+    print("UPDATE settings SET {} = {} WHERE id = 1".format(command,value))
+    db.execute("UPDATE settings SET {} = {} WHERE id = 1".format(command,value))
+    db.commit()    
+
+    return Response("nothing")
+
+#defines the settings page
 @bp.route('/settings', methods=('GET', 'POST'))
 @login_required
 def settings():
     return render_template('car/settings.html')
+
+############################################
+############# [Logging Routes] #############
+############################################ 
+#defines the logs page
+@bp.route('/logs', methods=('GET', 'POST'))
+@login_required
+def logs():
+    if request.method == 'POST':
+        db = get_db()
+        db.execute("DELETE FROM logging")
+        db.commit()
+        log("INFO","Logs cleared!")
+    return render_template('car/logs.html')
+
+@bp.route('/getlogs')
+@login_required
+def getlogs():
+    lvl = request.args.get("lvl")
+    logging = []
+    for log in get_db().execute('SELECT * FROM logging WHERE lvl >= {} ORDER BY id DESC'.format(lvl)):
+        logging.append(log['datetime'] + " - " + ["DEBUG","INFO","WARN","ERROR","CRIT"][log['lvl']] + ": " + log['msg'])
+    if len(logging) < 1:
+        logging = ["No entries found"]
+    return Response(json.dumps(logging))
+
+###########################################
+######## [Streaming Routes / Code] ########
+########################################### 
+#this class is to enable streaming - it essentially makes an object where we can store frames without saving them to a file - modified from a template
+class StreamingOutput(object):
+    def __init__(self):
+        self.frame = None
+        self.buffer = io.BytesIO()
+        self.condition = Condition()
+
+    def write(self, buf):
+        if buf.startswith(b'\xff\xd8'):
+            # New frame, copy the existing buffer's content and notify all
+            # clients it's available
+            self.buffer.truncate()
+            with self.condition:
+                self.frame = self.buffer.getvalue()
+                self.condition.notify_all()
+            self.buffer.seek(0)
+        return self.buffer.write(buf)
 
 #defines the function that generates our frames
 @login_required
