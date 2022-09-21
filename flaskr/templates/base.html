@@ -1,24 +1,83 @@
 <!doctype html>
 <title>{% block title %}{% endblock %} - PiCar</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='navbar.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-<nav>
-  <h1>PiCar</h1>
-  <ul>
-    {% if g.user %}
-      <li><a href="{{ url_for('user.settings') }}">{{ g.user['username'] }}</a>
-      <li><a href="{{ url_for('user.logout') }}">Log Out</a>
-    {% else %}
-      <li><a href="{{ url_for('user.login') }}">Log In</a>
-    {% endif %}
-  </ul>
-</nav>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{% set active_page = active_page|default('home') -%}
+
+{% set navigation_bar_home = [
+  ("/settings", 'settings', 'Settings'),
+  ("/logs", 'logs', 'Logs'),
+  ("/", 'home', 'Home')
+] -%}
+
+{% set navigation_bar_user = [
+  ("/user/settings", 'usersettings', 'Settings'),
+  ("/user/logout", 'logout', 'Logout')
+] -%}
+
+<div class="topnav" id="myTopnav">
+
+  <!-- <img src="{{url_for('static', filename='nms-mountain.webp')}}"/> -->
+  {% if g.user %}
+
+  <div class="dropdown{% if active_page == 'user' %} active{% endif%}">
+    <button class="dropbtn" onclick="changeStyle(0)">{{ g.user['username'].capitalize() }}  
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      {% for href, id, caption in navigation_bar_user %}
+      <a class="static" href="{{ href|e }}">{{ caption|e }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% for href, id, caption in navigation_bar_home %}
+  <a class="home{% if id == active_page %} active{% endif%}" href="{{ href|e }}">{{ caption|e }}</a>
+  {% endfor %}
+  
+  {% else %}
+  <a href="{{ url_for('user.login') }}">Login</a>
+  {% endif %}
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a>
+
+</div>
+
+<script>
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+
+//Allow clicking instead of hover for dropdown menus
+function changeStyle(i) {
+  var dropdown = document.getElementsByClassName('dropdown-content')[i];
+  if(document.getElementsByClassName('dropbtn')[i].matches(':hover')){
+  } else if(dropdown.style.display === 'block') {
+    dropdown.style.display = null;
+  } else {
+    dropdown.style.display = 'block'
+  }
+}
+</script>
+
+
 <section class="content">
+  <div class="centerdiv">
   <header>
-    {% block header %}{% endblock %}
   </header>
   {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
   {% endfor %}
   {% block content %}{% endblock %}
+  </div>
 </section>
