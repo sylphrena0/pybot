@@ -3,7 +3,7 @@
 {% block header %}
   <h1>{% block title %}Settings{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('control.index') }}">Control</a>
+    <a class="action" href="{{ url_for('car.index') }}">Control</a>
   {% endif %}
 {% endblock %}
 

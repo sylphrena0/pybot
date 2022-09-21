@@ -3,13 +3,13 @@
 {% block header %}
   <h1>{% block title %}Control{% endblock %}</h1>
   {% if g.user %}
-  <a class="action" href="{{ url_for('control.settings') }}">Settings</a>
+  <a class="action" href="{{ url_for('car.settings') }}">Settings</a>
   {% endif %}
 {% endblock %}
 
 {% block content %}
 
-<img src="{{ url_for('control.video_feed') }}" class="center"  style="margin-top:25px;">
+<img src="{{ url_for('car.video_feed') }}" class="center"  style="margin-top:25px;">
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 

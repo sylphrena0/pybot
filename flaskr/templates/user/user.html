@@ -3,7 +3,7 @@
 {% block header %}
   <h1>{% block title %}User Settings{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('control.index') }}">Control</a>
+    <a class="action" href="{{ url_for('car.index') }}">Control</a>
   {% endif %}
 {% endblock %}
 
@@ -16,5 +16,5 @@
     </div>   
 </form>
 
-<a href="{{ url_for('auth.register') }}" class="button-1">Register new user</a>
+<a href="{{ url_for('user.register') }}" class="button-1">Register new user</a>
 {% endblock %}

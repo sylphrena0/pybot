@@ -7,7 +7,7 @@ from threading import Condition #used for frame storage setup
 from adafruit_motorkit import MotorKit #motor control lib
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response #web framework imports
 from werkzeug.exceptions import abort
-from flaskr.auth import login_required
+from flaskr.user import login_required
 from flaskr.db import get_db,close_db #access to database
 
 #define the motorkit controls on init
@@ -32,7 +32,7 @@ class StreamingOutput(object):
         return self.buffer.write(buf)
 
 #sets the blueprint for this code
-bp = Blueprint('control', __name__)
+bp = Blueprint('car', __name__)
 
 #defines a settings function which is called when /getsettings is accessed
 @bp.route('/getsettings')
@@ -63,7 +63,7 @@ def changesetting():
 @bp.route('/move')
 @login_required #important, this requires a login so bad actors cannot control the car without logging in
 def move():
-    speed = 0.8
+    speed = 1
     command = request.args.get('command') #stores command arguement from get requests
 
     #parse commands from request and set speed
@@ -77,7 +77,7 @@ def move():
         direction = request.args.get('direction')
         if speed >= 0.8:
             throttleL = speed
-            throttleR = speed - 0.5
+            throttleR = -0.5*speed
         elif speed < 0.8:
             throttleL = speed + 0.2
             throttleR = speed - 0.2
@@ -95,7 +95,7 @@ def move():
         direction = request.args.get('direction') #no set directions assumes the direction is forward
 
         if speed >= 0.8:
-            throttleL = speed - 0.5
+            throttleL = -0.5*speed
             throttleR = speed
         elif speed < 0.8:
             throttleL = speed - 0.2
@@ -109,10 +109,10 @@ def move():
         '''else: #if no direction, the car doesn't move during the turn
             throttleL = -turnSpeed
             throttleR = turnSpeed'''
-    kit.motor1.throttle = throttleL
-    kit.motor2.throttle = throttleL
-    kit.motor3.throttle = throttleR
-    kit.motor4.throttle = throttleR
+    kit.motor1.throttle = -throttleL #left back
+    kit.motor2.throttle = throttleL #left front
+    kit.motor3.throttle = throttleR #right front
+    kit.motor4.throttle = -throttleR #right back
     return ("nothing")
 
 #defines the index page and controls buttons. control buttons should be removed!
@@ -127,14 +127,14 @@ def index():
         else:
             pass # unknown
     elif request.method == 'GET':
-        return render_template('control/index.html', form=request.form)
-    return render_template('control/index.html')
+        return render_template('car/index.html', form=request.form)
+    return render_template('car/index.html')
 
 #defines the settings page, currently blank. contains depreciated code from tutorial
 @bp.route('/settings', methods=('GET', 'POST'))
 @login_required
 def settings():
-    return render_template('control/settings.html')
+    return render_template('car/settings.html')
 
 #defines the function that generates our frames
 @login_required
