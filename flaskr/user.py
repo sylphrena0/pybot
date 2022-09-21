@@ -87,9 +87,9 @@ def login():
 
     return render_template('user/login.html')
 
-@bp.route('/user', methods=('GET', 'POST'))
+@bp.route('/settings', methods=('GET', 'POST'))
 @login_required
-def user():
+def settings():
     if request.method == 'POST':
         oldpassword = request.form['oldpassword']
         password = request.form['newpassword']
@@ -113,4 +113,4 @@ def user():
         db.execute("UPDATE user SET password = '{}' WHERE id = '{}'".format(generate_password_hash(password),user_id)) #update password
         db.commit()
 
-    return render_template('user/user.html')
+    return render_template('user/settings.html')

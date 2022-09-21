@@ -6,7 +6,7 @@
   <h1>PiCar</h1>
   <ul>
     {% if g.user %}
-      <li><a href="{{ url_for('user.user') }}">{{ g.user['username'] }}</a>
+      <li><a href="{{ url_for('user.settings') }}">{{ g.user['username'] }}</a>
       <li><a href="{{ url_for('user.logout') }}">Log Out</a>
     {% else %}
       <li><a href="{{ url_for('user.login') }}">Log In</a>
