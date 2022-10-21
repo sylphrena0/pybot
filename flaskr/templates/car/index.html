@@ -12,12 +12,31 @@
 
 <div class = centerdiv>
 
-<input type="submit" class="button" value="Forward" id="forward" onmousedown="forward()" onmouseup="stop()" style="margin-top:25px;"/><br>
+<!-- <input type="submit" class="button" value="Forward" id="forward" onmousedown="forward()" onmouseup="stop()" style="margin-top:25px;"/><br>
 <input type="submit" class="button" value="Left" id="left" onmousedown="left()" onmouseup="stop()" style="margin-right: 25px;"/>
 <input type="submit" class="button" value="Right" id="right" onmousedown="right()" onmouseup="stop()" style="margin-left: 25px;"/><br>
-<input type="submit" class="button" value="Backward" id="back" onmousedown="back()" onmouseup="stop()"/>
+<input type="submit" class="button" value="Backward" id="back" onmousedown="back()" onmouseup="stop()"/> -->
+
+<input id="trial" name="update" class="button-1" type="submit" value="Begin Trial" onclick="trial()"><!-- <h4 id="trial" style="display:inline;">Enable Key Control</h4> -->
+<!-- <form style="display: inline-block;" method="post"><input name="clear" class="button-1" type="submit" value="Clear Logs" onclick=""></form> -->
+</div>
 
 <script type=text/javascript>
+var currentTrial = false;
+
+function trial(params) {
+  btn = document.getElementById("trial");
+  if (!currentTrial) { 
+    console.log("Beginning trial!");
+    btn.value = "End Trial";
+    $.getJSON('/take_photo', function(data) {});
+    currentTrial = true;
+  } else {
+    currentTrial = false;
+    console.log("End trial!");
+    btn.value = "Begin Trial";
+  }
+}
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

@@ -10,8 +10,8 @@
 <script>
     //script will get current toggle setting from database and update toggles accordingly
     $(document).ready(function(){
-        lvl = document.getElementById("debug").value
-        $.getJSON(`/admin/getlogs?lvl=${lvl}`, function(logging) {
+        lvl = document.getElementById("debug").value;
+        $.getJSON(`/getlogs?lvl=${lvl}`, function(logging) {
           var logs = logging.join("\n");
           document.getElementById("logs").textContent=logs;
       });
@@ -40,7 +40,7 @@
 
   <script>
     function updateLogs(){
-        lvl = document.getElementById("debug").value
+        lvl = document.getElementById("debug").value;
         $.getJSON(`/getlogs?lvl=${lvl}`, function(logging) {
           var logs = logging.join("\n");
           document.getElementById("logs").textContent=logs;
