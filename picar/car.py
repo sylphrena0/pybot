@@ -175,8 +175,7 @@ class StreamingOutput(io.BufferedIOBase): #makes a memory object where we can st
 def genFrames():
     global camera, buffer #camera must be global to allow photos while streaming
     try: camera #checks if camera is initialized yet
-    except: #if not, initializes camera:
-        log("INFO", "Initializing Camera")
+    except NameError: #if not, initializes camera:
         camera = picamera()
         buffer = StreamingOutput()
         camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
