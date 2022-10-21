@@ -1,6 +1,7 @@
 import sqlite3
-
 import click
+import traceback
+from datetime import datetime
 from flask import current_app, g
 from flask.cli import with_appcontext
 
