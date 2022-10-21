@@ -138,7 +138,7 @@ def logs():
         db = get_db()
         db.execute("DELETE FROM logging")
         db.commit()
-        log("INFO","Logs cleared!")
+        log("INFO", "Logs cleared!")
     return render_template('car/logs.html')
 
 @bp.route('/getlogs')
@@ -173,17 +173,22 @@ class StreamingOutput(io.BufferedIOBase): #makes a memory object where we can st
 #defines the function that generates our frames
 @login_required
 def genFrames():
-    global camera #nessisary to allow photos for trial logging
-    camera = picamera()
-    buffer = StreamingOutput()
-    camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
-    camera.start_recording(JpegEncoder(), FileOutput(buffer))
+    global camera, buffer #camera must be global to allow photos for trial logging
+    try: camera #checks if camera is initialized yet
+    except: #if not, initializes camera:
+        log("INFO", "Initializing Camera")
+        camera = picamera()
+        buffer = StreamingOutput()
+        camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
+        camera.start_recording(JpegEncoder(), FileOutput(buffer))
+
     while True:
         with buffer.condition:
             buffer.condition.wait()
             frame = buffer.frame
         yield (b'--frame\r\n'
             b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    
             
 #defines the route that will access the video feed and call the feed function
 @bp.route('/video_feed')
