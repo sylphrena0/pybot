@@ -3,15 +3,13 @@ from picamera2 import Picamera2 as picamera #used for camera control
 from picamera2.encoders import JpegEncoder
 from picamera2.outputs import FileOutput 
 import json #to get data from js
+from time import sleep
 from threading import Condition #used for frame storage setup
 from adafruit_motorkit import MotorKit #used for motor control
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response #web framework imports
 from werkzeug.exceptions import abort
 from picar.user import login_required
 from picar.db import get_db, close_db, log #access to database
-
-#define the motorkit controls on init
-kit = MotorKit()
 
 #sets the blueprint for this code
 bp = Blueprint('car', __name__)
@@ -23,74 +21,79 @@ bp = Blueprint('car', __name__)
 @bp.route('/', methods=['GET','POST'])
 @login_required
 def index():
-    # if request.method == 'POST':
-    #     if request.form.get('forward') == 'VALUE1':
-    #         print("worked1")
-    #     elif  request.form.get('back') == 'VALUE2':
-    #         print("worked2")
-    #     else:
-    #         pass # unknown
-    # elif request.method == 'GET':
-    #     return render_template('car/index.html', form=request.form)
     return render_template('car/index.html')
 
 ############################################
 ############# [Movement Route] #############
 ############################################ 
+#define the motorkit controls on init
+kit = MotorKit()
+kit.motor1.throttle, kit.motor2.throttle, kit.motor3.throttle, kit.motor4.throttle = 0 #reset motors on init
+active_list = [] 
+first = None
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
 @login_required #important, this requires a login so bad actors cannot control the car without logging in
 def move():
+    global first, active_list, left_throttle, right_throttle
+
+    #grab arguments from client:
+    arrow = request.args.get('arrow')
+    state = request.args.get('state')
+    record = request.args.get('record')
     speed = 1
-    command = request.args.get('command') #stores command arguement from get requests
 
-    #parse commands from request and set speed
-    if command == 'forward':
-        throttleL, throttleR = speed, speed
-    elif command == 'backward':
-        throttleL, throttleR = -speed, -speed
-    elif command == 'stop':
-        throttleL, throttleR = 0, 0
-    elif command == 'rightTurn':
-        direction = request.args.get('direction')
-        if speed >= 0.8:
-            throttleL = speed
-            throttleR = -0.5*speed
-        elif speed < 0.8:
-            throttleL = speed + 0.2
-            throttleR = speed - 0.2
+    #preprocessing attributes before changing throttles
+    if first is None and state == "down": 
+        first = arrow #set first flag if first
+    if state == "down": 
+        active_list.append(arrow)
+    else: 
+        active_list.remove(arrow)
+    active = len(active_list) #count active
+    if state == "up" and active != 0: #if keyup, we need to redefine the current arrow
+        arrow = active_list[0] if arrow == first else first
 
-        if direction == 'forward': #checks if the car is already going forward. If so, no change is needed
-            pass
-        elif direction == 'backward': #checks if going backward and changes direction if so
-            throttleL *= -1
-            throttleR *= -1
-        '''elif direction == 'stationary': #if no direction, the car doesn't move during the turn - doesn't work with current motors and wheels - turnSpeed = 0.4
-            throttleL = turnSpeed
-            throttleR = -turnSpeed'''
+    #changing throttles
+    if active == 0: #if no arrows are active
+        left_throttle, right_throttle = 0, 0 #stop
+    elif active == 1:
+        if arrow == "up":
+            left_throttle, right_throttle = speed, speed
+        if arrow == "down":
+            left_throttle, right_throttle = -speed, -speed
+        if arrow == "left":
+            left_throttle = -0.5*speed
+            right_throttle = speed
+        if arrow == "right":
+            left_throttle = speed
+            right_throttle = -0.5*speed
+    elif active == 2:
+        if "up" in active_list:
+            if "left" in active_list:
+                left_throttle = -0.5*speed
+                right_throttle = speed
+            elif "right" in active_list:
+                left_throttle = speed
+                right_throttle = -0.5*speed
+            elif first == "up": #second key is down
+                left_throttle, right_throttle = speed, speed #go forward, ignoring down arrow
+            elif first == "down": #second key is down
+                left_throttle, right_throttle = -speed, -speed #go backward, ignoring up arrow
+        elif "down" in active_list:
+            if "left" in active_list:
+                left_throttle = 0.5*speed
+                right_throttle = -speed
+            elif "right" in active_list:
+                left_throttle = -speed
+                right_throttle = 0.5*speed
+    
+    #if user presses 3 or more keys, we do nothing (we also do not stop exisiting movement)
 
-    elif command == 'leftTurn':
-        direction = request.args.get('direction') #no set directions assumes the direction is forward
-
-        if speed >= 0.8:
-            throttleL = -0.5*speed
-            throttleR = speed
-        elif speed < 0.8:
-            throttleL = speed - 0.2
-            throttleR = speed + 0.2
-
-        if direction == 'forward': #checks if the car is already going forward. If so, no change is needed
-            pass
-        elif direction == 'backward': #checks if going backward and changes direction if so
-            throttleL *= -1
-            throttleR *= -1
-        '''else: #if no direction, the car doesn't move during the turn
-            throttleL = -turnSpeed
-            throttleR = turnSpeed'''
-    kit.motor1.throttle = -throttleL #left back
-    kit.motor2.throttle = throttleL #left front
-    kit.motor3.throttle = throttleR #right front
-    kit.motor4.throttle = -throttleR #right back
+    kit.motor1.throttle = -left_throttle #left back
+    kit.motor2.throttle = left_throttle #left front
+    kit.motor3.throttle = right_throttle #right front
+    kit.motor4.throttle = -right_throttle #right back
     return ("nothing")
 
 ###########################################
