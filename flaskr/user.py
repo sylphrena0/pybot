@@ -1,7 +1,7 @@
 import functools
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, session
 from werkzeug.security import check_password_hash, generate_password_hash
-from flaskr.db import get_db
+from flaskr.db import get_db, log
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -72,18 +72,20 @@ def login():
         user = db.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
-
+        
         if user is None:
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
 
         if error is None:
+            log("INFO","Logging in user " + username.lower())
             session.clear()
             session['user_id'] = user['id']
             return redirect(url_for('index'))
-
-        flash(error)
+        else:
+            flash(error)
+            log("WARN", "Failed login - user " + username.lower() + ": " + error)
 
     return render_template('user/login.html')
 
