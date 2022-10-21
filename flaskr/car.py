@@ -1,14 +1,14 @@
-import io #used to store frames
-import picamera #camera module for RPi camera
-import logging #self-explainatory
+import io #used to store video frames for streaming
+from picamera2 import Picamera2 as picamera #used for camera control
+from picamera2.encoders import JpegEncoder
+from picamera2.outputs import FileOutput 
 import json #to get data from js
-import socketserver #may be unused?
 from threading import Condition #used for frame storage setup
-from adafruit_motorkit import MotorKit #motor control lib
+from adafruit_motorkit import MotorKit #used for motor control
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response #web framework imports
 from werkzeug.exceptions import abort
 from flaskr.user import login_required
-from flaskr.db import get_db,close_db #access to database
+from flaskr.db import get_db, close_db, log #access to database
 
 #define the motorkit controls on init
 kit = MotorKit()
@@ -155,40 +155,45 @@ def getlogs():
 ###########################################
 ######## [Streaming Routes / Code] ########
 ########################################### 
-#this class is to enable streaming - it essentially makes an object where we can store frames without saving them to a file - modified from a template
-class StreamingOutput(object):
+#using picamera2 - modified from picamera2 documentation:
+#https://datasheets.raspberrypi.com/camera/picamera2-manual.pdf
+#https://github.com/raspberrypi/picamera2/blob/main/examples/mjpeg_server.py
+
+
+class StreamingOutput(io.BufferedIOBase): #makes a memory object where we can store frames without saving them to a file 
     def __init__(self):
         self.frame = None
-        self.buffer = io.BytesIO()
         self.condition = Condition()
 
     def write(self, buf):
-        if buf.startswith(b'\xff\xd8'):
-            # New frame, copy the existing buffer's content and notify all
-            # clients it's available
-            self.buffer.truncate()
-            with self.condition:
-                self.frame = self.buffer.getvalue()
-                self.condition.notify_all()
-            self.buffer.seek(0)
-        return self.buffer.write(buf)
+        with self.condition:
+            self.frame = buf
+            self.condition.notify_all()
 
 #defines the function that generates our frames
 @login_required
 def genFrames():
+    global camera #nessisary to allow photos for trial logging
+    camera = picamera()
     buffer = StreamingOutput()
+    camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
+    camera.start_recording(JpegEncoder(), FileOutput(buffer))
     while True:
-        with picamera.PiCamera(resolution='640x480', framerate=24) as camera:
-            #Uncomment the next line to change your Pi's Camera rotation (in degrees)
-            #camera.rotation = 90
-            
-            camera.capture(buffer, format='jpeg', use_video_port=True, thumbnail = None, quality = 25)
+        with buffer.condition:
+            buffer.condition.wait()
+            frame = buffer.frame
         yield (b'--frame\r\n'
-            b'Content-Type: image/jpeg\r\n\r\n' + buffer.frame + b'\r\n')
-
+            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            
 #defines the route that will access the video feed and call the feed function
 @bp.route('/video_feed')
 @login_required
 def video_feed():
-    return Response(genFrames(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(genFrames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@bp.route('/take_photo')
+def take_photo():
+    request = camera.capture_request()
+    request.save("main", "test.jpg")
+    request.release()
+    return Response('Captured!')
