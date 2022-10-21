@@ -173,7 +173,7 @@ class StreamingOutput(io.BufferedIOBase): #makes a memory object where we can st
 #defines the function that generates our frames
 @login_required
 def genFrames():
-    global camera, buffer #camera must be global to allow photos for trial logging
+    global camera, buffer #camera must be global to allow photos while streaming
     try: camera #checks if camera is initialized yet
     except: #if not, initializes camera:
         log("INFO", "Initializing Camera")
