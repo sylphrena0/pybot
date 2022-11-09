@@ -15,17 +15,23 @@
 </div>
 
 <script type=text/javascript>
-var currentTrial = false;
+var activeTrial = false;
 
 function trial(params) {
   btn = document.getElementById("trial");
-  if (!currentTrial) { 
+  if (!activeTrial) { 
+    $.getJSON('/initialize_trial', function(data) {});
+    const interval = setInterval(function() {
+      $.getJSON('/capture_image', function(data) {});
+    }, 1000); //send request to recording route every second (1000 ms)
+
     console.log("Beginning trial!");
     btn.value = "End Trial";
-    $.getJSON('/take_photo', function(data) {});
-    currentTrial = 1; //true
+    activeTrial = true;
   } else {
-    currentTrial = 0; //false
+    clearInterval(interval); //clear recording interval
+    $.getJSON('/save_trial', function(data) {});
+    activeTrial = false;
     console.log("End trial!");
     btn.value = "Begin Trial";
   }
@@ -35,9 +41,10 @@ const arrows = {38 : "up", 40 : "down", 37 : "left", 39 : "right"}; //dict of ar
 const active = []; //list of active arrows
 $(document).keydown(function(e){
   if ([38, 40, 37, 39].includes(e.keyCode)) { //if arrow
-    arrow = arrows[e.keyCode] //get arrow name
+    arrow = arrows[e.keyCode]; //get arrow name
     if (!(active.includes(arrow))) { //if arrow not already active
-      $.getJSON(`/move?arrow=${arrow}&record=${currentTrial}&state=down`, function(data) {}); //send data to python
+      console.log(`${arrow}.down - ${active}`);
+      $.getJSON(`/move?arrow=${arrow}&record=${activeTrial}&state=down`, function(data) {}); //send data to python
       active.push(arrow); //mark arrow as active
     };
   };
@@ -45,9 +52,10 @@ $(document).keydown(function(e){
 
 $(document).keyup(function(e){
   if ([38, 40, 37, 39].includes(e.keyCode)) { //if arrow
-    arrow = arrows[e.keyCode] //get arrow name
-    $.getJSON(`/move?arrow=${arrow}&record=${currentTrial}&state=up`, function(data) {}); //send data to python
-    active.pop(arrow); //mark arrow as inactive
+    arrow = arrows[e.keyCode]; //get arrow name
+    console.log(`${arrow}.up - ${active}`);
+    $.getJSON(`/move?arrow=${arrow}&record=${activeTrial}&state=up`, function(data) {}); //send data to python
+    active.splice(active.indexOf(arrow), 1); //mark arrow as inactive
   }; 
 });
 

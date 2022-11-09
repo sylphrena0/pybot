@@ -1,8 +1,13 @@
 import io #used to store video frames for streaming
+import json #to get data from js
+import schedule #for recording loop
+import pandas as pd
+from os import mkdir
+from datetime import datetime
+from threading import Thread #for recording loop
 from picamera2 import Picamera2 as picamera #used for camera control
 from picamera2.encoders import JpegEncoder
 from picamera2.outputs import FileOutput 
-import json #to get data from js
 from time import sleep
 from threading import Condition #used for frame storage setup
 from adafruit_motorkit import MotorKit #used for motor control
@@ -28,7 +33,7 @@ def index():
 ############################################ 
 #define the motorkit controls on init
 kit = MotorKit()
-kit.motor1.throttle, kit.motor2.throttle, kit.motor3.throttle, kit.motor4.throttle = 0 #reset motors on init
+kit.motor1.throttle, kit.motor2.throttle, kit.motor3.throttle, kit.motor4.throttle = 0, 0, 0, 0 #reset motors on init
 active_list = [] 
 first = None
 #defines a movement function which is called when /movement is accessed
@@ -37,19 +42,28 @@ first = None
 def move():
     global first, active_list, left_throttle, right_throttle
 
+    #TODO: TRIALS 
+    #     - for every call after first recorded keystroke, take a picture and record keystate
+    #     - make javascript call this function every x miliseconds if during a trial? if reasonable?
+
     #grab arguments from client:
     arrow = request.args.get('arrow')
     state = request.args.get('state')
     record = request.args.get('record')
     speed = 1
 
+    # if state == "down" and arrow in active_list: #ingore event if duplicate keydown makes it through (key combinations make it through js code)
+    #     return ("Duplicate event!")
+
     #preprocessing attributes before changing throttles
     if first is None and state == "down": 
         first = arrow #set first flag if first
     if state == "down": 
         active_list.append(arrow)
-    else: 
+    elif state == "up" and arrow in active_list: #don't remove arrow if already removed (duplicate keyups can happen with combinations)
         active_list.remove(arrow)
+
+    print(active_list) #useful for debugging
     active = len(active_list) #count active
     if state == "up" and active != 0: #if keyup, we need to redefine the current arrow
         arrow = active_list[0] if arrow == first else first
@@ -94,7 +108,12 @@ def move():
     kit.motor2.throttle = left_throttle #left front
     kit.motor3.throttle = right_throttle #right front
     kit.motor4.throttle = -right_throttle #right back
-    return ("nothing")
+
+    if record == "true":
+        with open(trialDirectory + '/commands.txt', 'w') as output:
+            commands.loc[len(commands.index)] = [str(datetime.now().timestamp() - start.timestamp()), arrow, state] 
+
+    return ("Success!")
 
 ###########################################
 ############ [Settings Routes] ############
@@ -198,9 +217,27 @@ def genFrames():
 def video_feed():
     return Response(genFrames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@bp.route('/take_photo')
-def take_photo():
+##########################################
+############ [Recording Code] ############
+##########################################
+
+@bp.route('/initialize_trial') #called every second during a trial
+def begin_trial():
+    global trialDirectory, start, commands
+    commands = pd.DataFrame(columns=('time','arrow','state'))
+    start = datetime.now()
+    trialDirectory = "trials/trial_%Y-%m-%d_%H-%M-%S"
+    mkdir(start.strftime(trialDirectory))
+    return Response(f'Created trial directory!')
+
+@bp.route('/capture_image') #called every second during a trial
+def record():
     request = camera.capture_request()
-    request.save("main", "test.jpg")
+    request.save("main", trialDirectory + datetime.now().strftime(f'/{str(datetime.now().timestamp() - start.timestamp())}.jpg')) #name should be time in s since start.
     request.release()
     return Response('Captured!')
+
+@bp.route('/save_trial') #called every second during a trial
+def save_trial():
+    commands.to_csv(trialDirectory + '/commands.csv')
+    return Response(f'Saved recording!')
