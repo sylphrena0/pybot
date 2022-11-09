@@ -9,7 +9,7 @@
 
 #install dependancies:
 sudo apt update
-sudo apt install git pip python3-flask python3-opencv libgl1
+sudo apt install git pip python3-flask libgl1
 sudo raspi-config nonint do_i2c 0 #enable I2C
 pip3 install pandas numpy picamera adafruit-circuitpython-motorkit
 
