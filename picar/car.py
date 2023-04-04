@@ -33,14 +33,14 @@ def index():
 ############################################ 
 #define the motorkit controls on init
 kit = MotorKit()
-kit.motor1.throttle, kit.motor2.throttle, kit.motor3.throttle, kit.motor4.throttle = 0, 0, 0, 0 #reset motors on init
-active_list = [] 
+kit.motor1.throttle, kit.motor2.throttle, kit.motor3.throttle, kit.motor4.throttle = 0, 0, 0, 0 #reset motors on init 
+active_list = []
 first = None
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
 @login_required #important, this requires a login so bad actors cannot control the car without logging in
 def move():
-    global first, active_list, left_throttle, right_throttle
+    global kit, first, active_list
 
     #TODO: TRIALS 
     #     - for every call after first recorded keystroke, take a picture and record keystate
@@ -62,6 +62,7 @@ def move():
         active_list.append(arrow)
     elif state == "up" and arrow in active_list: #don't remove arrow if already removed (duplicate keyups can happen with combinations)
         active_list.remove(arrow)
+        arrow = first
 
     print(active_list) #useful for debugging
     active = len(active_list) #count active
@@ -102,12 +103,12 @@ def move():
                 left_throttle = -speed
                 right_throttle = 0.5*speed
     
-    #if user presses 3 or more keys, we do nothing (we also do not stop exisiting movement)
-
-    kit.motor1.throttle = -left_throttle #left back
-    kit.motor2.throttle = left_throttle #left front
-    kit.motor3.throttle = right_throttle #right front
-    kit.motor4.throttle = -right_throttle #right back
+    #if user presses 3 or more keys, we do nothing (we also do not stop existing movement)
+    print("Throttles:", left_throttle, right_throttle)
+    kit.motor3.throttle = -left_throttle #left back motor
+    kit.motor4.throttle = left_throttle #left front motor
+    kit.motor1.throttle = right_throttle #right front motor
+    kit.motor2.throttle = -right_throttle #right back motor
 
     if record == "true":
         with open(trialDirectory + '/commands.txt', 'w') as output:
@@ -221,13 +222,13 @@ def video_feed():
 ############ [Recording Code] ############
 ##########################################
 
-@bp.route('/initialize_trial') #called every second during a trial
+@bp.route('/initialize_trial')
 def begin_trial():
     global trialDirectory, start, commands
     commands = pd.DataFrame(columns=('time','arrow','state'))
     start = datetime.now()
-    trialDirectory = "trials/trial_%Y-%m-%d_%H-%M-%S"
-    mkdir(start.strftime(trialDirectory))
+    trialDirectory = start.strftime("trials/trial_%Y-%m-%d_%H-%M-%S")
+    mkdir(trialDirectory)
     return Response(f'Created trial directory!')
 
 @bp.route('/capture_image') #called every second during a trial
