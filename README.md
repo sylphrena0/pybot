@@ -1,5 +1,6 @@
 # PyBot - RaspberryPi Car Control Software
-Python code to contol a raspberry pi car that is contolled with an ardino motor driver and has camera and proximity sensors.
+
+Python code to control a raspberry pi car that is controlled with an Arduino motor driver and has camera and proximity sensors
 
 Technical documentation will be added to this repo once complete.
 
