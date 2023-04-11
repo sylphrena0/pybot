@@ -32,15 +32,17 @@ def index():
 ############# [Movement Route] #############
 ############################################ 
 #define the motorkit controls on init
-kit = MotorKit()
-kit.motor1.throttle, kit.motor2.throttle, kit.motor3.throttle, kit.motor4.throttle = 0, 0, 0, 0 #reset motors on init 
+# kit = MotorKit()
+# kit.motor1.throttle, kit.motor2.throttle, kit.motor3.throttle, kit.motor4.throttle = 0, 0, 0, 0 #reset motors on init 
 active_list = []
 first = None
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
 @login_required #important, this requires a login so bad actors cannot control the car without logging in
 def move():
-    global kit, first, active_list
+    global first, active_list
+
+    kit = MotorKit()
 
     #TODO: TRIALS 
     #     - for every call after first recorded keystroke, take a picture and record keystate
@@ -72,43 +74,44 @@ def move():
     #changing throttles
     if active == 0: #if no arrows are active
         left_throttle, right_throttle = 0, 0 #stop
+        left_front, left_back, right_front, right_back = 0, 0, 0, 0
     elif active == 1:
         if arrow == "up":
-            left_throttle, right_throttle = speed, speed
+            left_front, left_back, right_front, right_back = speed, speed, speed, speed
         if arrow == "down":
-            left_throttle, right_throttle = -speed, -speed
+            left_front, left_back, right_front, right_back = -speed, -speed, -speed, -speed
         if arrow == "left":
-            left_throttle = -0.5*speed
-            right_throttle = speed
+            left_front, left_back = speed, speed
+            right_front, right_back = -speed, -speed
         if arrow == "right":
-            left_throttle = speed
-            right_throttle = -0.5*speed
+            left_front, left_back = -speed, -speed
+            right_front, right_back = speed, speed
     elif active == 2:
         if "up" in active_list:
             if "left" in active_list:
-                left_throttle = -0.5*speed
-                right_throttle = speed
+                left_front, left_back = 0, 0
+                right_front, right_back = speed, speed
             elif "right" in active_list:
-                left_throttle = speed
-                right_throttle = -0.5*speed
+                left_front, left_back = speed, speed
+                right_front, right_back = 0, 0
             elif first == "up": #second key is down
-                left_throttle, right_throttle = speed, speed #go forward, ignoring down arrow
+                left_front, left_back, right_front, right_back = speed, speed, speed, speed #go forward, ignoring down arrow
             elif first == "down": #second key is down
-                left_throttle, right_throttle = -speed, -speed #go backward, ignoring up arrow
+                left_front, left_back, right_front, right_back = -speed, -speed, -speed, -speed #go backward, ignoring up arrow
         elif "down" in active_list:
             if "left" in active_list:
-                left_throttle = 0.5*speed
-                right_throttle = -speed
+                left_front, left_back = 0, 0
+                right_front, right_back = -speed, -speed
             elif "right" in active_list:
-                left_throttle = -speed
-                right_throttle = 0.5*speed
+                left_front, left_back = -speed, -speed
+                right_front, right_back = 0, 0
     
     #if user presses 3 or more keys, we do nothing (we also do not stop existing movement)
-    print("Throttles:", left_throttle, right_throttle)
-    kit.motor3.throttle = -left_throttle #left back motor
-    kit.motor4.throttle = left_throttle #left front motor
-    kit.motor1.throttle = right_throttle #right front motor
-    kit.motor2.throttle = -right_throttle #right back motor
+    # print("Throttles:", left_throttle, right_throttle)
+    kit.motor1.throttle = right_front #right front motor
+    kit.motor2.throttle = -right_back #right back motor
+    kit.motor3.throttle = -left_back #left back motor
+    kit.motor4.throttle = left_front #left front motor
 
     if record == "true":
         with open(trialDirectory + '/commands.txt', 'w') as output:
@@ -199,11 +202,13 @@ def genFrames():
     global camera, buffer #camera must be global to allow photos while streaming
     try: camera #checks if camera is initialized yet
     except NameError: #if not, initializes camera:
+        # try:
         camera = picamera()
         buffer = StreamingOutput()
         camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
         camera.start_recording(JpegEncoder(), FileOutput(buffer))
 
+            
     while True:
         with buffer.condition:
             buffer.condition.wait()
