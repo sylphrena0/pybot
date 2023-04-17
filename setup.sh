@@ -14,14 +14,14 @@ sudo raspi-config nonint do_i2c 0 #enable I2C
 pip3 install pandas numpy picamera2 adafruit-circuitpython-motorkit schedule
 
 #clone repo into current directory:
-git config --global user.name "<git_username>"
-git config --global user.email "<git_email>"
-git config --global user.password "<git_password>"
-git config --global credential.helper store
-git clone https://github.com/sylphrena0/picar .
+# git config --global user.name "<git_username>"
+# git config --global user.email "<git_email>"
+# git config --global user.password "<git_password>"
+# git config --global credential.helper store
+# git clone https://github.com/sylphrena0/picar .
 
 #add aliases and variables:
-echo 'export FLASK_APP=picar' >> ~/.bashrc 
+echo 'export FLASK_APP=pybot' >> ~/.bashrc 
 echo 'export FLASK_ENV=development' >> ~/.bashrc 
-echo 'alias car="cd /home/pi/picar; flask run -h 0.0.0.0"' >> ~/.bashrc 
+echo 'alias car="cd /home/pi/pybot; flask run -h 0.0.0.0"' >> ~/.bashrc 
 source ~/.bashrc 
