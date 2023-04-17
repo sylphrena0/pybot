@@ -1,23 +1,46 @@
 import io #used to store video frames for streaming
 import json #to get data from js
-import schedule #for recording loop
+import traceback #for error logging
 import pandas as pd
 from os import mkdir
+from os.path import exists
 from datetime import datetime
-from threading import Thread #for recording loop
 from picamera2 import Picamera2 as picamera #used for camera control
 from picamera2.encoders import JpegEncoder
 from picamera2.outputs import FileOutput 
 from time import sleep
 from threading import Condition #used for frame storage setup
 from adafruit_motorkit import MotorKit #used for motor control
-from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response #web framework imports
-from werkzeug.exceptions import abort
+from flask import Blueprint, g, render_template, request, Flask, Response #web framework imports
 from pybot.user import login_required
-from pybot.db import get_db, close_db, log #access to database
+from pybot.db import get_db, log #access to database
+
+if (not exists("trials")):
+    mkdir("trials")
 
 #sets the blueprint for this code
 bp = Blueprint('car', __name__)
+
+def disconnectmonitor():
+    global active_list, first
+    try:
+        i = 0
+        while True:
+            yield 'Waiting: {}!'.format(i)
+            i += 1
+            sleep(1)
+    finally:
+        log("INFO", "Disconnected from client!")
+        kit = MotorKit()
+        kit.motor1.throttle, kit.motor2.throttle, kit.motor3.throttle, kit.motor4.throttle = 0, 0, 0, 0 #reset motors on disconnect
+        active_list = []
+        first = None
+
+@bp.route('/monitor') #code called in car/index.html to cleanup if a client disconnects
+def monitor():
+    return Response(disconnectmonitor(), content_type='text/event-stream')
+
+
 
 ############################################
 ############### [Home Route] ###############
@@ -34,7 +57,7 @@ def index():
 #define the motorkit controls on init
 # kit = MotorKit()
 # kit.motor1.throttle, kit.motor2.throttle, kit.motor3.throttle, kit.motor4.throttle = 0, 0, 0, 0 #reset motors on init 
-active_list = []
+active_list = [] #set of active keys
 first = None
 #defines a movement function which is called when /movement is accessed
 @bp.route('/move')
@@ -66,14 +89,13 @@ def move():
         active_list.remove(arrow)
         arrow = first
 
-    print(active_list) #useful for debugging
+    # print(active_list) #useful for debugging
     active = len(active_list) #count active
     if state == "up" and active != 0: #if keyup, we need to redefine the current arrow
         arrow = active_list[0] if arrow == first else first
 
-    #changing throttles
+    #changing throttles - please reference: https://en.wikipedia.org/wiki/Mecanum_wheel
     if active == 0: #if no arrows are active
-        left_throttle, right_throttle = 0, 0 #stop
         left_front, left_back, right_front, right_back = 0, 0, 0, 0
     elif active == 1:
         if arrow == "up":
@@ -107,11 +129,16 @@ def move():
                 right_front, right_back = 0, 0
     
     #if user presses 3 or more keys, we do nothing (we also do not stop existing movement)
-    # print("Throttles:", left_throttle, right_throttle)
-    kit.motor1.throttle = right_front #right front motor
-    kit.motor2.throttle = -right_back #right back motor
-    kit.motor3.throttle = -left_back #left back motor
-    kit.motor4.throttle = left_front #left front motor
+    try:
+        kit.motor1.throttle = right_front #right front motor
+        kit.motor2.throttle = -right_back #right back motor
+        kit.motor3.throttle = -left_back #left back motor
+        kit.motor4.throttle = left_front #left front motor
+    except Exception as e:
+        log("Error", traceback.format_exc())
+        kit.motor1.throttle, kit.motor2.throttle, kit.motor3.throttle, kit.motor4.throttle = 0, 0, 0, 0 #reset motors on error
+        active_list = []
+        first = None
 
     if record == "true":
         with open(trialDirectory + '/commands.txt', 'w') as output:
@@ -208,7 +235,6 @@ def genFrames():
         camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
         camera.start_recording(JpegEncoder(), FileOutput(buffer))
 
-            
     while True:
         with buffer.condition:
             buffer.condition.wait()
@@ -238,6 +264,7 @@ def begin_trial():
 
 @bp.route('/capture_image') #called every second during a trial
 def record():
+    global trialDirectory, camera
     request = camera.capture_request()
     request.save("main", trialDirectory + datetime.now().strftime(f'/{str(datetime.now().timestamp() - start.timestamp())}.jpg')) #name should be time in s since start.
     request.release()
@@ -245,5 +272,6 @@ def record():
 
 @bp.route('/save_trial') #called every second during a trial
 def save_trial():
+    global trialDirectory, commands
     commands.to_csv(trialDirectory + '/commands.csv')
     return Response(f'Saved recording!')

@@ -16,12 +16,14 @@
 
 <script type=text/javascript>
 var activeTrial = false;
+var interval = null;    
+clearInterval(interval); //clear recording interval
 
 function trial(params) {
   btn = document.getElementById("trial");
   if (!activeTrial) { 
     $.getJSON('/initialize_trial', function(data) {});
-    const interval = setInterval(function() {
+    interval = setInterval(function() {
       $.getJSON('/capture_image', function(data) {});
     }, 1000); //send request to recording route every second (1000 ms)
 
