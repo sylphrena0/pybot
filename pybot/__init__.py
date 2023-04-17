@@ -9,7 +9,7 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='TeAFL25daZuasgs8l768Cx9Tm3cKZl7JEvKvu7gne4dNRKNFVATMuAN3Us3z5NKTd',
-        DATABASE=os.path.join(app.instance_path, 'picar.sqlite')
+        DATABASE=os.path.join(app.instance_path, 'pybot.sqlite')
     )
 
     if test_config is None:

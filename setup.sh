@@ -1,8 +1,8 @@
 #!/bin/bash
 ######################################################
-####### Bash Script to Setup Picar in Blank OS #######
+####### Bash Script to Setup PyBot in Blank OS #######
 ######################################################
-# Install picar dependancies
+# Install pybot dependancies
 #
 # Author: Sylphrena Kleinsasser
 ######################################################
@@ -14,11 +14,11 @@ sudo raspi-config nonint do_i2c 0 #enable I2C
 pip3 install pandas numpy picamera2 adafruit-circuitpython-motorkit schedule
 
 #clone repo into current directory:
-# git config --global user.name "<git_username>"
-# git config --global user.email "<git_email>"
-# git config --global user.password "<git_password>"
-# git config --global credential.helper store
-# git clone https://github.com/sylphrena0/picar .
+git config --global user.name "<git_username>"
+git config --global user.email "<git_email>"
+git config --global user.password "<git_password>"
+git config --global credential.helper store
+git clone https://github.com/sylphrena0/pybot .
 
 #add aliases and variables:
 echo 'export FLASK_APP=pybot' >> ~/.bashrc 
