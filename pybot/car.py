@@ -21,7 +21,7 @@ if (not exists("trials")):
 #sets the blueprint for this code
 bp = Blueprint('car', __name__)
 
-def disconnectmonitor():
+def disconnect_monitor():
     global active_list, first
     try:
         i = 0
@@ -38,7 +38,7 @@ def disconnectmonitor():
 
 @bp.route('/monitor') #code called in car/index.html to cleanup if a client disconnects
 def monitor():
-    return Response(disconnectmonitor(), content_type='text/event-stream')
+    return Response(disconnect_monitor(), content_type='text/event-stream')
 
 
 
@@ -69,7 +69,7 @@ def move():
 
     #TODO: TRIALS 
     #     - for every call after first recorded keystroke, take a picture and record keystate
-    #     - make javascript call this function every x miliseconds if during a trial? if reasonable?
+    #     - make javascript call this function every x milliseconds if during a trial? if reasonable?
 
     #grab arguments from client:
     arrow = request.args.get('arrow')
@@ -77,7 +77,7 @@ def move():
     record = request.args.get('record')
     speed = 1
 
-    # if state == "down" and arrow in active_list: #ingore event if duplicate keydown makes it through (key combinations make it through js code)
+    # if state == "down" and arrow in active_list: #ignore event if duplicate keydown makes it through (key combinations make it through js code)
     #     return ("Duplicate event!")
 
     #preprocessing attributes before changing throttles
@@ -164,7 +164,7 @@ def getsettings():
 @bp.route('/changesetting')
 @login_required
 def changesetting():
-    command = request.args.get('command') #stores command arguement from get requests
+    command = request.args.get('command') #stores command argument from get requests
     value = request.args.get('value')
 
     db = get_db()

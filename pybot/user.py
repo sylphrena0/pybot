@@ -32,7 +32,7 @@ def login_required(view):
     return wrapped_view
 
 @bp.route('/register', methods=('GET', 'POST'))
-@login_required #cannor create new user unless already registered!
+@login_required #cannot create new user unless already registered!
 def register():
     if request.method == 'POST':
         username = request.form['username']
