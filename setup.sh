@@ -11,7 +11,7 @@
 sudo apt update
 sudo apt install git pip python3-flask libgl1
 sudo raspi-config nonint do_i2c 0 #enable I2C
-pip3 install pandas numpy picamera2 adafruit-circuitpython-motorkit schedule
+pip3 install pandas numpy picamera2 adafruit-circuitpython-motorkit schedule adafruit-circuitpython-vcnl4040 adafruit-circuitpython-vl53l1x
 
 #clone repo into current directory:
 git config --global user.name "<git_username>"
