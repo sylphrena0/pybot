@@ -13,8 +13,8 @@ from threading import Condition #used for frame storage setup
 from adafruit_motorkit import MotorKit #used for motor control
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, Flask, Response #web framework imports
 from werkzeug.exceptions import abort
-from picar.user import login_required
-from picar.db import get_db, close_db, log #access to database
+from pybot.user import login_required
+from pybot.db import get_db, close_db, log #access to database
 
 #sets the blueprint for this code
 bp = Blueprint('car', __name__)
