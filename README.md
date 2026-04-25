@@ -8,4 +8,4 @@
 
 This repository contains source code to control a raspberry pi car that is controlled with an Arduino motor driver and has camera and proximity sensors. It also included bash scripts to setup the device, and a [detailed technical report](https://github.com/sylphrena0/pybot/blob/main/Thesis%20Paper.pdf) (the Honors Thesis for the Lycoming College Department of Physics) of the project up until May 2023.
 
-CAD design files for PyBot are available [in my onshape project](https://tinyurl.com/pybot-cad).
+CAD files for PyBot are available [in my onshape project](https://tinyurl.com/pybot-cad).
